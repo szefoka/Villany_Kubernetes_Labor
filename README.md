@@ -21,6 +21,9 @@ docker push <dockerhub_username>/<image_name>		#this command uploads the image t
 ## Kubernetes
 A Kubernetes egy nyílt forráskódú, konténer-orkesztrációs rendszer, mely lehetővé teszi a konténerizált alkalmazások automatikus telepítését, skálázását és egyéb menedzselését.
 
+### Namespace
+A Kubernetes rendszer felhasználói a létrehozott erőforrásaikat különböző névterekben szeparálhatják el egymástól. Csak a névterekben belüli erőforrások elnevezései kell hogy egyediek legyenek. Így például több hallgató is a saját névterében létrehozhat ugyanolyan névvel szolgátatásokat.
+
 ### Pod
 A Kubernetes által menedzselhető legalsóbb szintű elem a Pod, mely egy vagy több konténer együttes futtatásáért felel. A Pod-ban lévő konténerek megosztozva használják a Pod-hoz rendelt erőforrásokat. Egy Pod-ban lévő konténereket a Kubernetes közösen menedzsel, így a Pod-ok fizikai gépekre való ütemezésekor minden a Pod-ban lévő konténer egy Kobernetes worker node-ra kerül. Pod-okat a Kubernetes-ben legegyszerűbben egy-egy yaml fájl megadásával tudunk létrehozni. Az alábbi példa egy nginx konténert futtat egy Pod-ban, melynek a neve nginx lesz, a konténer listában láthatjuk, hogy az egyetlen konténer neve nginx lesz, melynek a verziója az 1.14.2, továbbá a konténer a 80-as port-on engedélyez hozzáférést.
 
@@ -61,6 +64,8 @@ spec:
         ports:
         - containerPort: 80
 ```
+
+### Service
 
 ### Tárlók csatolása
 A labor során megismerkedünk azzal is, hogy hogyan csatolhatunk külső tárolókat egy Pod-ban futó konténerhez. A labor során és az alábbi példában (az egyszerűség kedvéért) a Kubernetes HostMount megoldását szemléltetjük, ahol a konténert futtaó gép a saját fájlrendszeréből csatol egy könyvtárat a konténerhez. Ebben az esetben meg kell győződnünk, hogy minden worker node-on elérhető a csatolni kívánt adat. Ehhez a legegyszerűbb megoldás egy NFS kialakítása a szervereken. A példában a lényeges részek a spec:containrs:volumeMounts és a spec:volumes alatt láthatóak. A VolumeMounts alatt definiálhatjuk, hogy mely csatolmányokat akarjuk az adott konténerhez rendelni (a name mező egyezzen meg a csatolni kívánt volume nevével) és a konténeren belüli elérési útvonalat. A volumes alatt pedig definiálhatjuk a csatolni kívánt erőforrások nevét, azoknak a típusát és (jelen esetben) a fizikai tárolón lévő helyét és típusát (File(OrCreate) Directory(OrCreate)).
