@@ -21,11 +21,10 @@ docker push <dockerhub_username>/<image_name>		#this command uploads the image t
 ## Kubernetes
 A Kubernetes egy nyílt forráskódú, konténer-orkesztrációs rendszer, mely lehetővé teszi a konténerizált alkalmazások automatikus telepítését, skálázását és egyéb menedzselését.
 
-Pod
-A Kubernetes által menedzselhető legalsóbb szintű elem a Pod, mely egy vagy több konténer együttes futtatásáért felel. 
-Pods are the smallest deployable units of computing that you can create and manage in Kubernetes.
-A Pod is a group of one or more containers, with shared storage and network resources, and a specification for how to run the containers. A Pod's contents are always co-located and co-scheduled, and run in a shared context. A Pod models an application-specific "logical host": it contains one or more application containers which are relatively tightly coupled. In non-cloud contexts, applications executed on the same physical or virtual machine are analogous to cloud applications executed on the same logical host.
+### Pod
+A Kubernetes által menedzselhető legalsóbb szintű elem a Pod, mely egy vagy több konténer együttes futtatásáért felel. A Pod-ban lévő konténerek megosztozva használják a Pod-hoz rendelt erőforrásokat. Egy Pod-ban lévő konténereket a Kubernetes közösen menedzsel, így a Pod-ok fizikai gépekre való ütemezésekor minden a Pod-ban lévő konténer egy Kobernetes worker node-ra kerül. Pod-okat a Kubernetes-ben legegyszerűbben egy-egy yaml fájl megadásával tudunk létrehozni. Az alábbi példa egy nginx konténert futtat egy Pod-ban, melynek a neve nginx lesz, a konténer listában láthatjuk, hogy az egyetlen konténer neve nginx lesz, melynek a verziója az 1.14.2, továbbá a konténer a 80-as port-on engedélyez hozzáférést.
 
+```
 apiVersion: v1
 kind: Pod
 metadata:
@@ -36,22 +35,16 @@ spec:
     image: nginx:1.14.2
     ports:
     - containerPort: 80
+```
 
-ReplicaSet
-A ReplicaSet's purpose is to maintain a stable set of replica Pods running at any given time. As such, it is often used to guarantee the availability of a specified number of identical Pods.
-However, a Deployment is a higher-level concept that manages ReplicaSets and provides declarative updates to Pods along with a lot of other useful features. Therefore, we recommend using Deployments instead of directly using ReplicaSets, unless you require custom update orchestration or don't require updates at all.
-This actually means that you may never need to manipulate ReplicaSet objects: use a Deployment instead, and define your application in the spec section.
+### ReplicaSet és Deployment
+Az egyforma típusú Pod-ok létrehozásáért és menedzseléséért a Kubernetes a ReplicaSet erőforrást használja. A ReplicaSet-ek segítségével a Kubernetes rendszer garantálni tudja, hogy bizonyos számú Pod az adott típusból mindig jelen legyen a rendszerben. Azonban ezt az erőforrástípust meglehetősen ritkán használjuk, mivel a Kubernetes a Deployment erőfforáss típusban számos más hasznos kiegészítést definiál a ReplicaSet-hez képest. Emiatt a labor során a ReplicaSet helyett a Deployment erőforrással fogunk dolgozni. Az alábbi yaml fájl egy Deployment-et ír le, mely 3 példányban futtatja az nginx Pod-ot. A podban lévő konténerleíró hasonló az előző példához. Azonban ebben az esetben további meta-adatokat adhatunk meg. Így például a selector:matchlabels:app segítségével a Deplyoment-et később más erőforrásokkal tudjuk összekötni.
 
-Deployment
-A Deployment provides declarative updates for Pods and ReplicaSets.
-You describe a desired state in a Deployment, and the Deployment Controller changes the actual state to the desired state at a controlled rate. You can define Deployments to create new ReplicaSets, or to remove existing Deployments and adopt all their resources with new Deployments.
-
+```
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-deployment
-  labels:
-    app: nginx
 spec:
   replicas: 3
   selector:
@@ -67,27 +60,33 @@ spec:
         image: nginx:1.14.2
         ports:
         - containerPort: 80
-        
-        
-In this example:
+```
 
-    A Deployment named nginx-deployment is created, indicated by the .metadata.name field. This name will become the basis for the ReplicaSets and Pods which are created later. See Writing a Deployment Spec for more details.
+### Tárlók csatolása
+A labor során megismerkedünk azzal is, hogy hogyan csatolhatunk külső tárolókat egy Pod-ban futó konténerhez. A labor során és az alábbi példában (az egyszerűség kedvéért) a Kubernetes HostMount megoldását szemléltetjük, ahol a konténert futtaó gép a saját fájlrendszeréből csatol egy könyvtárat a konténerhez. Ebben az esetben meg kell győződnünk, hogy minden worker node-on elérhető a csatolni kívánt adat. Ehhez a legegyszerűbb megoldás egy NFS kialakítása a szervereken. A példában a lényeges részek a spec:containrs:volumeMounts és a spec:volumes alatt láthatóak. A VolumeMounts alatt definiálhatjuk, hogy mely csatolmányokat akarjuk az adott konténerhez rendelni (a name mező egyezzen meg a csatolni kívánt volume nevével) és a konténeren belüli elérési útvonalat. A volumes alatt pedig definiálhatjuk a csatolni kívánt erőforrások nevét, azoknak a típusát és (jelen esetben) a fizikai tárolón lévő helyét és típusát (File(OrCreate) Directory(OrCreate)).
 
-    The Deployment creates a ReplicaSet that creates three replicated Pods, indicated by the .spec.replicas field.
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pd
+spec:
+  containers:
+  - image: registry.k8s.io/test-webserver
+    name: test-container
+    volumeMounts:
+    - mountPath: /test-pd
+      name: test-volume
+  volumes:
+  - name: test-volume
+    hostPath:
+      # directory location on host
+      path: /data
+      # this field is optional
+      type: Directory
+```     
 
-    The .spec.selector field defines how the created ReplicaSet finds which Pods to manage. In this case, you select a label that is defined in the Pod template (app: nginx). However, more sophisticated selection rules are possible, as long as the Pod template itself satisfies the rule.
-    Note: The .spec.selector.matchLabels field is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". All of the requirements, from both matchLabels and matchExpressions, must be satisfied in order to match.
-
-    The template field contains the following sub-fields:
-        The Pods are labeled app: nginxusing the .metadata.labels field.
-        The Pod template's specification, or .template.spec field, indicates that the Pods run one container, nginx, which runs the nginx Docker Hub image at version 1.14.2.
-        Create one container and name it nginx using the .spec.template.spec.containers[0].name field.
-
-
-
-# Villany_Kubernetes_Labor
-
-## Feladatok
+# Feladatok
 
 ### 1. VLC Docker image létrehozása
 
