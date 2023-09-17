@@ -40,7 +40,7 @@ spec:
     - containerPort: 80
 ```
 
-### ReplicaSet és Deployment
+### ReplicaSetés Deployment
 Az egyforma típusú Pod-ok létrehozásáért és menedzseléséért a Kubernetes a ReplicaSet erőforrást használja. A ReplicaSet-ek segítségével a Kubernetes rendszer garantálni tudja, hogy bizonyos számú Pod az adott típusból mindig jelen legyen a rendszerben. Azonban ezt az erőforrástípust meglehetősen ritkán használjuk, mivel a Kubernetes a Deployment erőfforáss típusban számos más hasznos kiegészítést definiál a ReplicaSet-hez képest. Emiatt a labor során a ReplicaSet helyett a Deployment erőforrással fogunk dolgozni. Az alábbi yaml fájl egy Deployment-et ír le, mely 3 példányban futtatja az nginx Pod-ot. A podban lévő konténerleíró hasonló az előző példához. Azonban ebben az esetben további meta-adatokat adhatunk meg. Így például a selector:matchlabels:app segítségével a Deplyoment-et később más erőforrásokkal tudjuk összekötni.
 
 ```
@@ -66,6 +66,21 @@ spec:
 ```
 
 ### Service
+A Kubernetes által definiált Service erőforrás lehetővé teszi, hogy a futtatott hálózati alkalmazásokhoz hozzá lehessen férni. A Service-ek egy vagy több alkalmazást tudnak egy port mögé elrejteni. Alapesetben minden Pod egy saját, egyedi IP címmel rendelkezik a Kubernetes rendszerben, azomban ha egy Pod újraindul, már nem biztos hogy a régi címén elérhető. Emiatt pedig a hozzá kapcsolódó egyéb alkalmazásokat újra kellene konfigurálni. Erre a problémára ad megoldást a Service erőforrás, mely segítsével a Pod-okban futó alkamazások név szerint tudják egymást elérni a Service-eken keresztül. Az alábbi péládában a Service az előző példában ismertetett nginx pod-ok 80-as portját a 8080-as porton teszi elérhetővé a Service neve mögött. A spec:selector:app értéke pedig megadja, hogy mely matchlabel-ekkel rendelkező Pod-ok kerüljenek a Service mögé. Az nginx Pod-ok a következőképpen érhetők el: nginx.<névtér>.svc.cluster.local:8080.
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 80
+```
 
 ### Tárlók csatolása
 A labor során megismerkedünk azzal is, hogy hogyan csatolhatunk külső tárolókat egy Pod-ban futó konténerhez. A labor során és az alábbi példában (az egyszerűség kedvéért) a Kubernetes HostMount megoldását szemléltetjük, ahol a konténert futtaó gép a saját fájlrendszeréből csatol egy könyvtárat a konténerhez. Ebben az esetben meg kell győződnünk, hogy minden worker node-on elérhető a csatolni kívánt adat. Ehhez a legegyszerűbb megoldás egy NFS kialakítása a szervereken. A példában a lényeges részek a spec:containrs:volumeMounts és a spec:volumes alatt láthatóak. A VolumeMounts alatt definiálhatjuk, hogy mely csatolmányokat akarjuk az adott konténerhez rendelni (a name mező egyezzen meg a csatolni kívánt volume nevével) és a konténeren belüli elérési útvonalat. A volumes alatt pedig definiálhatjuk a csatolni kívánt erőforrások nevét, azoknak a típusát és (jelen esetben) a fizikai tárolón lévő helyét és típusát (File(OrCreate) Directory(OrCreate)).
