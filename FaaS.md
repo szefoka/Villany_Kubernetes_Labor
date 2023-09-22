@@ -1,3 +1,17 @@
+# Segédanyag a laborra való felkészüléshez
+## FaaS/Serverless
+A felhő-techonológiák esetén megfigyelhető, hogy a virtualizált környezetek és a bennük futó alkalmazáshalmazok egyre kisebb méretűek. A Function as a Service azaz a függvényszolgáltatás, vagy más néven Serverless computing egy újabb cloud computing implementáicó. Ebben az esetben a felhasználók apró programrészleteket futtatnak a felhőben, amiket függvényeknek nevezünk. Ezeket a függvényeket összekapcsolva kaphatunk különböző felhő-szolgáltatásokat. A serverless név ugyan utalhatna arra is, hogy nincsenek fizikai kiszolgálók/számítógépek, de valójában azt jelenti, hogy az alkamazásfejlesztők csak a kód implementálására kell koncentráljanak, az integrációs lépéseket a keretrendszer elvégzi helyettük.
+
+## Nyílt forráskódú FaaS implementációk
+A labor során az OpenFaaS nyílt forráskódú FaaS keretrendszerrel fogunk dolgozni. Nagyjából az összes nyílt forráskódú FaaS keretrendszerre jellemző, hogy valamilyen gateway komponensen keresztül hívhatók meg a futtatott függvények. A gateway komponens tehát egy proxyként szolgál a függvények felé.
+A FaaS függvények futtatásához a keretrendszer egy runtime/wrapper komponenst biztosít amely futtatja a felhasználó által írt függvényt. A runtime komponens általában egy HTTP webszerver környezet, melynek segítségével könnyen átvihetók adatok és hívási paraméterek a függvénypéldányok között. A függvény runtime ezen kívül pedig egy helth-check mechanizmust is definiál, ezzel jelezve a keretrendszernek, hogy a futtatott függvény hibára futott-e.
+
+## Függvényhívások
+A függvényeket szinkron és aszinkron módon is meghívhatjuk. Szinkron módon a hívó fél addig várakozik amíg a meghívott függvény válasza vissza nem tér. Aszinkron esetben a hívó fél a hívás kiküldése után azonnal folytathatja a dolgát. Szinkron hívások esetén direkt http kapcsolatot épít fel a hívó a hívott között, míg aszinkron hívásoknál a hívó fél a gateway komponens aszinkron végpontjához fordul amelynek átadja a hívási paramétereit és egy azonnal kapott válasz után folytathatja a futását. A gateway a kapott hívási paramétereket egy üzenetsorba helyezi amiket egy központi szolgáltatás, az üzenetsor-kezelő továbbít a megfelelő függvénynek. Az üzenetsor-kezelő és a hívott függvény között egy HTTP kapcsolat épül fel a függvény futása idejére.
+
+## Tracing és Profilozás
+A függvényke futását különböző, úgynevezett tracing megoldással követhetjük nyomon. A labor sorána  Jaeger nyílt forráskódú függvény-monitorozó rendszerrel fogunk dolgozni.
+
 # Feladatok
 
 ## 1. Függvény létrehozása és használata
