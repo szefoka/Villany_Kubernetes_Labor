@@ -31,7 +31,7 @@ A függvényt többféleképpen is meg tudod hívni.
 3. webes felület segítségével az invoke gombra kattintva
 
 ### 1.3 A függvény kiskálázása
-Terheld a függvényt a Hey programmal, 1 percig, nézd meg, hogy hány példányra skálázódik ki a függvény, ezt a webes felületen tudod a legkönnyebben nyomon követni a replicas felirat alatt látható a függvények aktuális példányszáma.
+Terheld a függvényt a Hey programmal, 1 percig, nézd meg, hogy hány példányra skálázódik ki a függvény, ezt a webes felületen tudod a legkönnyebben nyomon követni a replicas felirat alatt látható a függvények aktuális példányszáma. hey -c 10 -z 60s <fuggveny eleresi utja>
 
 ## 2. Függvények láncolása
 1. Az előző feladat alapján hozz létre egy második python nyelvű függvényt ami hozzáfűzi a neptunkódod a bementi értékhez. A függvény neve legyen <neptun kód>-2
