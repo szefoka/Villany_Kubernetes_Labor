@@ -1,19 +1,52 @@
----
-kind: Service
 apiVersion: v1
+kind: Service
 metadata:
-  name: jaeger
-  namespace: default
-  labels:
-    app: jaeger
+  name: elasticsearch
 spec:
   selector:
-    app: jaeger
+    app: elasticsearch
   ports:
-  - name: port1
-    protocol: TCP
-    port: 16686
+  - protocol: TCP
+    port: 9200
+    targetPort: 9200
+    name: rest
+  - protocol: TCP
+    port: 9300
+    targetPort: 9300
+    name: nodecomm
   type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch
+  labels:
+    app: elasticsearch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elasticsearch
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    spec:
+      containers:
+      - name: elasticsearch
+        image: docker.elastic.co/elasticsearch/elasticsearch:6.8.0
+        ports:
+        - containerPort: 9200
+          name: rest
+        - containerPort: 9300
+          name: nodecomm
+        env:
+          - name: ES_JAVA_OPTS
+            value: "-Xms2g -Xmx2g"
+          - name: discovery.type
+            value: "single-node"
+          - name: xpack.security.enabled
+            value: "false"
 ---
 kind: Service
 apiVersion: v1
