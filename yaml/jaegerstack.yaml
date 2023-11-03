@@ -64,6 +64,23 @@ spec:
     port: 6831
   type: LoadBalancer
 ---
+kind: Service
+apiVersion: v1
+metadata:
+  name: jaeger
+  namespace: default
+  labels:
+    app: jaeger
+spec:
+  selector:
+    app: jaeger
+  ports:
+  - name: port1
+    protocol: TCP
+    port: 16686
+    nodePort: 36686
+  type: LoadBalancer
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
