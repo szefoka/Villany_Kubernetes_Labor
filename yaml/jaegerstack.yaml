@@ -78,7 +78,7 @@ spec:
   - name: port1
     protocol: TCP
     port: 16686
-    nodePort: 36686
+    nodePort: 31686
   type: LoadBalancer
 ---
 apiVersion: apps/v1
