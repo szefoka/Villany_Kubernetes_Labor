@@ -1,0 +1,89 @@
+- name: install Kubernetes
+  hosts: "localhost"
+  tasks:
+    - name: install prerequisities
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg2
+          - make
+        state: present
+        update_cache: true
+      become: true
+
+    - name: Add gpg for Kubernetes
+      apt_key:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        state: present
+
+    - name: Add Kubernetes apt repository
+      apt_repository:
+        repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+        state: present
+     
+    - name: Install Kubernetes components
+      apt:
+        pkg:
+          - kubelet=1.21.7-00
+          - kubeadm=1.21.7-00
+          - kubectl=1.21.7-00
+        state: present
+        update_cache: true
+      become: true
+
+    - name: Add Docker gpg
+      apt_key:
+        url: https://download.docker.com/linux/debian/gpg
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/debian stretch stable
+        state: present
+
+    - name: Install Docker
+      apt:
+        pkg:
+          - docker-ce
+        state: present
+        update_cache: true
+      become: true
+
+    - name: Add Golang repository key
+      apt_key:
+        url: https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x52b59b1571a79dbc054901c0f6bc817356a3d45e
+        state: present
+
+    - name: Add Golang repository
+      apt_repository:
+        repo: deb https://ppa.launchpadcontent.net/longsleep/golang-backports/ubuntu focal main 
+        state: present
+
+    - name: Install Golang
+      apt:
+        pkg:
+          - golang-go
+        state: present
+        update_cache: true
+      become: true
+
+    - name: Clone Hey
+      ansible.builtin.git:
+        repo: https://github.com/rakyll/hey.git
+        dest: /tmp/hey
+
+    - name: Make Hey
+      community.general.make:
+        chdir: /tmp/hey
+
+    - name: Copy Hey to /usr/bin
+      become: yes
+      become_user: root
+      copy:
+        remote_src: yes
+        src: /tmp/hey/bin/hey_linux_amd64
+        dest: /usr/bin/hey
+        owner: root
+        mode: '755'
