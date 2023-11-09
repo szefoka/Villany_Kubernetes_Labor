@@ -120,7 +120,7 @@ A függvényt többféleképpen is meg tudod hívni.
     ```
     curl localhost:31112/function/myfunc1  
     ```
-4. webes felület segítségével az invoke gombra kattintva
+4. webes felület segítségével az invoke gombra kattintva, amit a VM-ed IP címe és a 31112 porton érsz el. Itt a felhasználónév és jelszó ugyanúgy admin - Hello. A host gépen futó internetböngészőben a < VM IP >:31112 címet keresd.
 
 ### 1.3 A függvény kiskálázása
 Terheld a függvényt a Hey programmal, 1 percig, nézd meg, hogy hány példányra skálázódik ki a függvény, ezt a webes felületen tudod a legkönnyebben nyomon követni a replicas felirat alatt látható a függvények aktuális példányszáma. hey -c 10 -z 60s <fuggveny eleresi utja>
@@ -139,7 +139,7 @@ hey -c 10 -z 60s http://localhost:31112/function/myfunc1
     - param - bemeneti paraméter(ek) json formátumban
     - context - kontextus (ezt csak add át, a függvényed fejlécében található)
     - asynch - aszinkron/szinkron hívás True=Aszinkron False=Szinkron
-5. Hívd meg az első függvényt és nézd meg mi lesz az eredménye. Vizsgáld a Jaeger felületén a létrejött tracing idősorokat.
+5. Hívd meg az első függvényt és nézd meg mi lesz az eredménye. Vizsgáld a Jaeger felületén a létrejött tracing idősorokat. A Jaeger grafikus felületét a vm-ed IP címe és a 31686-os porton éred el. < VM IP >:31686
    - A láncban az első függvény
     ```
     from function import invoke
