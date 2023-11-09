@@ -87,3 +87,6 @@
         dest: /usr/bin/hey
         owner: root
         mode: '755'
+        
+    - name: Install faas-cli
+      shell: curl -sSL https://cli.openfaas.com | sudo -E sh
