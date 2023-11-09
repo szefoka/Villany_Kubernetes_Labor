@@ -13,6 +13,36 @@ A függvényeket szinkron és aszinkron módon is meghívhatjuk. Szinkron módon
 A függvényke futását különböző, úgynevezett tracing megoldással követhetjük nyomon. A labor sorána  Jaeger nyílt forráskódú függvény-monitorozó rendszerrel fogunk dolgozni.
 
 # Feladatok
+## VM előkészítése
+1. Nyisd meg a virtualbox-ot
+2. Kattints a csillagra az új VM létrehozásához
+3. Nevezd el Ubuntu-nak
+4. Állíts be 4 GB memóriát és 4 CPU magot
+5. A merevlemez beállításakor válaszd a már létező virtuális merevlemez használatát, a jobb oldali kis mappa ikonra kattintás után egy ablak jelenik meg
+6. A felugró ablakban az Add gombra kattints és válaszd ki a kitömörített vdi fájlt.
+7. Végül kattints a Finish gombra
+8. Ezt követően állítsd be VM-ed hálózati kártyáit, ehhez kattints először a fogaskerékre, majd válaszd a hálózati lehetőséget
+9. Állíts be egy NAT interfészt port forward-olással az ssh kapsolat létrehozására.
+10. Adj hozzá egy másik interfészt bridge üzemmódban arra a gépedben lévő hálózati kártyára amin az internetet is eléred
+11. Végül indítsd el a VM-et. Jobb gombbal kattintva választhatsz hogy általános, vagy headless (nem jelenik meg a VM képernyője) módban indítod. Headless mód esetén SSH-val tudsz hozzáférni, ami sokszor kényelmesebb tud lenni.
+12. Az ssh-hoz használd a következő parancsot
+  ```
+  ssh labor@127.0.0.1 -p 10022
+  ```  
+## Környezet telepítése
+1. Clone-ozd a VM-be ezt a git repo-t.
+2. Másold a /home/labor mappába a repo-ban lévő function_runtime mappát functions néven.
+3. Lépj be a Villany_Kubernetes_Labor/FaaS_Setup mappába.
+  ```
+  cp -r Villany_Kubernetes_Labor/function_runtime /home/labor/functions
+  ```
+4. Első alkalommal add ki a make install parancsot, ha valamilyen okból félbe kellett hagynod a labort és a VM-et leállítottad, akkor a make reset parancsot add ki.
+5. A make futtatása után az ip a paranccsal kérd le a VM-ed enp0s8 interfész címét. Ezen az IP-n keresztül  fogod elérni a VM-ben futó
+ szolgáltatásokat.
+  ```
+  ip a
+  ```
+
 
 ## 1. Függvény létrehozása és használata
 ### 1.1 Python Hello függvény létrehozása
