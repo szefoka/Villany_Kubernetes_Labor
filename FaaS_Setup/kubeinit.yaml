@@ -73,3 +73,6 @@
 
     - name: Install Jaeger
       command: kubectl apply -f https://raw.githubusercontent.com/szefoka/Villany_Kubernetes_Labor/main/yaml/jaegerstack.yaml
+      
+    - name: Install faas-cli
+      shell: curl -sSL https://cli.openfaas.com | sudo -E sh
