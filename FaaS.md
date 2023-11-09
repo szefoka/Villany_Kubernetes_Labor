@@ -16,37 +16,109 @@ A függvényke futását különböző, úgynevezett tracing megoldással követ
 
 ## 1. Függvény létrehozása és használata
 ### 1.1 Python Hello függvény létrehozása
-- A faas-cli new paranccsal tudsz létrehozni új függvényt, melynek a --lang paraméterében megadva tudod kiválasztani a megfelelő nyelvet. A függvény nevének válassz egy alulvonásoktól mentes nevet, pl myfunc, vagy myfunc-1.
+- Elsőként jelentkezz be az OpenFaaS rendszerbe a faas-cli alkalmazás használatával. A felhasználóneved az admin lesz, míg a jelszavad a Hello.
+  ```
+  faas-cli login -u admin -p Hello -g localhost:31112
+  ```
+- A faas-cli new paranccsal tudsz létrehozni új függvényt, melynek a --lang paraméterében megadva tudod kiválasztani a megfelelő nyelvet. A függvény nevének válassz egy alulvonásoktól mentes nevet, pl myfunc, vagy myfunc-1. A kubernetes által indított konténerek mellett egy docker registry konténer is fut. Ide fogod feltölteni a függvényed image-ét. Ezért a faas-cli parancshoz azt is add meg, hogy mely registry-be kerüljön a függvény a push parancs kiadására. Ehhez használd a --prefix 127.0.0.1:5000 lehetőséget.
+  ```
+  faas-cli new --lang python --prefix 127.0.0.1 myfunc1
+  ```
 - A parancs sikeres lefutására létrejön egy mappa és egy yml fájl, mindkettő a függvényed nevét viseli
 - A létrejött mappában találsz egy handler.py fájlt, melyben a függvényedet tudod módosítani és egy requirements.txt fájlt amiben a függvényhez való függőségeket tudod megadni
-- A yml fájlban az image nevét egészítsd ki, hogy a szefoka repository-ba töltse fel
+- A függvényed az alább látható módon fog kinézni. Ez az egyszerű vüggvény a híváskor kapott értéket adja vissza. Nyugodtan módosítsd a függvényt, ha szeretnéd.
+  ```
+  from function import invoke
+
+  def handle(req, context):
+    """handle a request to the function
+    Args:
+        req (str): request body
+    """
+
+    return req
+  ```
 - Build-eld a függvényt a faas-cli parancs segítségével, ahol a -f kapcsolóval tudod megadni hogy melyik yml fájlból készüljön a FaaS keretrendszerben futtatható függvénypéldány
-- Push-old a függvényt a docker hub-ra
+  ```
+  faas-cli build -f myfunc1.yml
+  ```
+- Push-old a függvényt
+  ```
+  faas-cli push -f myfunc1.yml
+  ```
 - Deploy-old a függvényt, melynek hatására az elindul a FaaS keretrendszerben. Itt figyelj arra, hogy a -g kapcsolóval a FaaS keretrendszer gateway komponensét szólítsd meg, hiszen csak így fogja tudni a keretrendszer, hogy egy új függvényt kell indítania
+  ```
+  faas-cli deploy -f myfunc1.yml -g localhost:31112
+  ```
 
 ### 1.2 Hívd meg a függvényt
 A függvényt többféleképpen is meg tudod hívni.
-1. faas-cli invoke
-2. curl - ebben az esetben ismerned kell a függvény elérési útját. Ehhez a kubectl get services -n openfaas parancsot add ki és keresd ki a gateway komponens belső IP címét és belső portját. Használhatod a kubernetes rendszer külső IP címét és a 31112 portot is. Ebben az esetben a függvény az <ip>:<port>/function/<függvényed neve> útvonalon érhető el
-3. webes felület segítségével az invoke gombra kattintva
+1. faas-cli invoke, ilyenkor szabadon írhatsz egy szöveget, majd a CTRL+D kombinációval tudod elküldeni a szöveget a függvényednek.
+    ```
+    faas-cli invoke myfunc1 -g localhost:31112
+    ```
+3. curl - ebben az esetben ismerned kell a függvény elérési útját. Ehhez a kubectl get services -n openfaas parancsot add ki és keresd ki a gateway komponens belső IP címét és belső portját. Használhatod a kubernetes rendszer külső IP címét és a 31112 portot is. Ebben az esetben a függvény az < ip >:< port >/function/<függvényed neve> útvonalon érhető el
+    ```
+    curl localhost:31112/function/myfunc1  
+    ```
+4. webes felület segítségével az invoke gombra kattintva
 
 ### 1.3 A függvény kiskálázása
 Terheld a függvényt a Hey programmal, 1 percig, nézd meg, hogy hány példányra skálázódik ki a függvény, ezt a webes felületen tudod a legkönnyebben nyomon követni a replicas felirat alatt látható a függvények aktuális példányszáma. hey -c 10 -z 60s <fuggveny eleresi utja>
+```
+hey -c 10 -z 60s http://localhost:31112/function/myfunc1
+```
 
 ## 2. Függvények láncolása
-1. Az előző feladat alapján hozz létre egy második python nyelvű függvényt ami hozzáfűzi a neptunkódod a bementi értékhez. A függvény neve legyen <neptun kód>-2
-2. Módosítsd az első függvényt, hogy az hívja meg az újonnan létrehozott függvényt a Hello szöveggel és adja vissza eredményként az új függvény által visszaadott értékt.
-3. A függvények hívását az invoke utasítás meghívásával teheted meg, aminek a paraméterei sorban a következők: 
+1. Az előző feladat alapján hozz létre egy második python nyelvű függvényt ami hozzáfűzi a neptunkódod a bementi értékhez.
+   ```
+   faas-cli new --lang python --prefix 127.0.0.1 myfunc1
+   ```
+3. Módosítsd az első függvényt, hogy az hívja meg az újonnan létrehozott függvényt a Hello szöveggel és adja vissza eredményként az új függvény által visszaadott értékt.
+4. A függvények hívását az invoke utasítás meghívásával teheted meg, aminek a paraméterei sorban a következők: 
     - funcname - a maghívni kívánt függvény neve
     - param - bemeneti paraméter(ek) json formátumban
     - context - kontextus (ezt csak add át, a függvényed fejlécében található)
     - asynch - aszinkron/szinkron hívás True=Aszinkron False=Szinkron
-4. Hívd meg az első függvényt és nézd meg mi lesz az eredménye. Vizsgáld a Jaeger felületén a létrejött tracing idősorokat.
+5. Hívd meg az első függvényt és nézd meg mi lesz az eredménye. Vizsgáld a Jaeger felületén a létrejött tracing idősorokat.
+   - A láncban az első függvény
+    ```
+    from function import invoke
+
+    def handle(req, context):
+        """handle a request to the function
+        Args:
+            req (str): request body
+        """
+
+        return invoke.invoke("myfunc2", req, context, False)
+    ```
+    - A láncban a második függvény
+    ```
+    from function import invoke
+    import time
+    def handle(req, context):
+        """handle a request to the function
+        Args:
+            req (str): request body
+        """
+        time.sleep(0.02)
+        return req
+    ```
 
 ## 3. Aszinkron függvényhívás
 1. Alakítsd át az első függvényt, hogy aszinkron módon hívja meg a második függvényt.
-2. A második függvényt pedig írd át, hogy az eredményt a Redis tárolóba mentse el. A redis-be való beíráshoz a következő link alatt találsz információkat https://redis.io/docs/clients/python/
-3. Egészítsd ki a második függvény requirements.txt fájlját úgy, hogy a függvény build-elése során a redis api-t is telepítse.
-4. Hívd meg az első függvényt, majd nézd meg, hogy az eredmény bekerült-e a Redisbe. Ehhez használd a redis-cli parancsot a -h kapcsolóval ahol a redis szolgáltatás IP címét adod meg.
+    ```
+    from function import invoke
+
+    def handle(req, context):
+        """handle a request to the function
+        Args:
+            req (str): request body
+        """
+
+        return invoke.invoke("myfunc2", req, context, True)
+    ```
+3. Hívd meg az első függvényt.
 5. Vizsgáld a Jaeger felületén a létrejött tracing idősorokat. Miben különböznek ezek az előbbi esettől?
 
