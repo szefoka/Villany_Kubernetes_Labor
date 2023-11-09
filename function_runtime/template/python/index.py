@@ -21,7 +21,7 @@ def init_jaeger_tracer(function_name='your-app-name'):
     log_level = logging.DEBUG
     logging.getLogger('').handlers = []
     logging.basicConfig(format='%(asctime)s %(message)s', level=log_level)
-
+    hostname = socket.gethostname()
     config = Config(
         config={ # usually read from some yaml config
             'sampler': {
@@ -34,12 +34,13 @@ def init_jaeger_tracer(function_name='your-app-name'):
             },
             'logging': True,
         },
-        service_name=socket.gethostname().split("-")[0:2],
+        service_name="-".join(list(set(hostname.split("-")) - set(hostname.split("-")[-2:]))),
         validate=True,
     )
     # this call also sets opentracing.tracer
     tracer = config.initialize_tracer()
     return tracer
+
 
 tracer = init_jaeger_tracer()
 
