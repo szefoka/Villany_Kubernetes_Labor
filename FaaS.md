@@ -16,16 +16,45 @@ A függvényke futását különböző, úgynevezett tracing megoldással követ
 ## VM előkészítése
 1. Nyisd meg a virtualbox-ot
 2. Kattints a csillagra az új VM létrehozásához
+
+  ![Alt text](https://github.com/szefoka/Villany_Kubernetes_Labor/blob/main/VM_Creation_Steps_Images/create_vm_1.png)
+
 3. Nevezd el Ubuntu-nak
+
+  ![Alt text](https://github.com/szefoka/Villany_Kubernetes_Labor/blob/main/VM_Creation_Steps_Images/create_vm_2.png)
+
 4. Állíts be 4 GB memóriát és 4 CPU magot
+
+  ![Alt text](https://github.com/szefoka/Villany_Kubernetes_Labor/blob/main/VM_Creation_Steps_Images/create_vm_3.png)
+
 5. A merevlemez beállításakor válaszd a már létező virtuális merevlemez használatát, a jobb oldali kis mappa ikonra kattintás után egy ablak jelenik meg
+
+  ![Alt text](https://github.com/szefoka/Villany_Kubernetes_Labor/blob/main/VM_Creation_Steps_Images/create_vm_4.png)
+
 6. A felugró ablakban az Add gombra kattints és válaszd ki a kitömörített vdi fájlt.
+
+  ![Alt text](https://github.com/szefoka/Villany_Kubernetes_Labor/blob/main/VM_Creation_Steps_Images/create_vm_5.png)
+
 7. Végül kattints a Finish gombra
+
+  ![Alt text](https://github.com/szefoka/Villany_Kubernetes_Labor/blob/main/VM_Creation_Steps_Images/create_vm_6.png)
+
 8. Ezt követően állítsd be VM-ed hálózati kártyáit, ehhez kattints először a fogaskerékre, majd válaszd a hálózati lehetőséget
+
+  ![Alt text](https://github.com/szefoka/Villany_Kubernetes_Labor/blob/main/VM_Creation_Steps_Images/create_vm_7.png)
+
 9. Állíts be egy NAT interfészt port forward-olással az ssh kapsolat létrehozására.
+
+  ![Alt text](https://github.com/szefoka/Villany_Kubernetes_Labor/blob/main/VM_Creation_Steps_Images/create_vm_8.png)
+
+  ![Alt text](https://github.com/szefoka/Villany_Kubernetes_Labor/blob/main/VM_Creation_Steps_Images/create_vm_9.png)
+
 10. Adj hozzá egy másik interfészt bridge üzemmódban arra a gépedben lévő hálózati kártyára amin az internetet is eléred
+
+  ![Alt text](https://github.com/szefoka/Villany_Kubernetes_Labor/blob/main/VM_Creation_Steps_Images/create_vm_10.png)  
+
 11. Végül indítsd el a VM-et. Jobb gombbal kattintva választhatsz hogy általános, vagy headless (nem jelenik meg a VM képernyője) módban indítod. Headless mód esetén SSH-val tudsz hozzáférni, ami sokszor kényelmesebb tud lenni.
-12. Az ssh-hoz használd a következő parancsot
+12. Az ssh-hoz használd a következő parancsot, a VM felhasználója: labor, jelszava: labor.
   ```
   ssh labor@127.0.0.1 -p 10022
   ```  
