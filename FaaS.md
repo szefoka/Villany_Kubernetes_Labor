@@ -129,17 +129,17 @@ hey -c 10 -z 60s http://localhost:31112/function/myfunc1
 ```
 
 ## 2. Függvények láncolása
-1. Az előző feladat alapján hozz létre egy második python nyelvű függvényt ami hozzáfűzi a neptunkódod a bementi értékhez.
+1. Az előző feladat alapján hozz létre egy második python nyelvű függvényt.
    ```
-   faas-cli new --lang python --prefix 127.0.0.1:5000 myfunc1
+   faas-cli new --lang python --prefix 127.0.0.1:5000 myfunc2
    ```
-3. Módosítsd az első függvényt, hogy az hívja meg az újonnan létrehozott függvényt a Hello szöveggel és adja vissza eredményként az új függvény által visszaadott értékt.
-4. A függvények hívását az invoke utasítás meghívásával teheted meg, aminek a paraméterei sorban a következők: 
+2. Módosítsd az első függvényt, hogy az hívja meg az újonnan létrehozott függvényt a Hello szöveggel és adja vissza eredményként az új függvény által visszaadott értékt.
+3. A függvények hívását az invoke utasítás meghívásával teheted meg, aminek a paraméterei sorban a következők: 
     - funcname - a maghívni kívánt függvény neve
     - param - bemeneti paraméter(ek) json formátumban
     - context - kontextus (ezt csak add át, a függvényed fejlécében található)
     - asynch - aszinkron/szinkron hívás True=Aszinkron False=Szinkron
-5. Hívd meg az első függvényt és nézd meg mi lesz az eredménye. Vizsgáld a Jaeger felületén a létrejött tracing idősorokat. A Jaeger grafikus felületét a vm-ed IP címe és a 31686-os porton éred el. < VM IP >:31686
+4. Hívd meg az első függvényt és nézd meg mi lesz az eredménye. Vizsgáld a Jaeger felületén a létrejött tracing idősorokat. A Jaeger grafikus felületét a vm-ed IP címe és a 31686-os porton éred el. < VM IP >:31686
    - A láncban az első függvény
     ```
     from function import invoke
