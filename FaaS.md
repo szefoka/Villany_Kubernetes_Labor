@@ -71,7 +71,7 @@ A függvényke futását különböző, úgynevezett tracing megoldással követ
   ```
   ip a
   ```
-
+6. Ezek után a /home/labor/functions mappában add ki a faas-cli parancsokat!
 
 ## 1. Függvény létrehozása és használata
 ### 1.1 Python Hello függvény létrehozása
