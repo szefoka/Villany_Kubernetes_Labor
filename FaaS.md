@@ -81,7 +81,7 @@ A függvényke futását különböző, úgynevezett tracing megoldással követ
   ```
 - A faas-cli new paranccsal tudsz létrehozni új függvényt, melynek a --lang paraméterében megadva tudod kiválasztani a megfelelő nyelvet. A függvény nevének válassz egy alulvonásoktól mentes nevet, pl myfunc, vagy myfunc-1. A kubernetes által indított konténerek mellett egy docker registry konténer is fut. Ide fogod feltölteni a függvényed image-ét. Ezért a faas-cli parancshoz azt is add meg, hogy mely registry-be kerüljön a függvény a push parancs kiadására. Ehhez használd a --prefix 127.0.0.1:5000 lehetőséget.
   ```
-  faas-cli new --lang python --prefix 127.0.0.1 myfunc1
+  faas-cli new --lang python --prefix 127.0.0.1:5000 myfunc1
   ```
 - A parancs sikeres lefutására létrejön egy mappa és egy yml fájl, mindkettő a függvényed nevét viseli
 - A létrejött mappában találsz egy handler.py fájlt, melyben a függvényedet tudod módosítani és egy requirements.txt fájlt amiben a függvényhez való függőségeket tudod megadni
