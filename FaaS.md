@@ -140,6 +140,10 @@ hey -c 10 -z 60s http://localhost:31112/function/myfunc1
     - context - kontextus (ezt csak add át, a függvényed fejlécében található)
     - asynch - aszinkron/szinkron hívás True=Aszinkron False=Szinkron
 4. Hívd meg az első függvényt és nézd meg mi lesz az eredménye. Vizsgáld a Jaeger felületén a létrejött tracing idősorokat. A Jaeger grafikus felületét a vm-ed IP címe és a 31686-os porton éred el. < VM IP >:31686
+5. A Jaeger felületen a különböző trace-ekre kattintva további információt kapsz a függvények futásáról.
+   ![Alt text](https://github.com/szefoka/Villany_Kubernetes_Labor/blob/main/VM_Creation_Steps_Images/jaeger1.png)
+   ![Alt text](https://github.com/szefoka/Villany_Kubernetes_Labor/blob/main/VM_Creation_Steps_Images/jaeger2.png)
+
    - A láncban az első függvény
     ```
     from function import invoke
