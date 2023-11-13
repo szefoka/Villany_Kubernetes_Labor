@@ -131,7 +131,7 @@ hey -c 10 -z 60s http://localhost:31112/function/myfunc1
 ## 2. Függvények láncolása
 1. Az előző feladat alapján hozz létre egy második python nyelvű függvényt ami hozzáfűzi a neptunkódod a bementi értékhez.
    ```
-   faas-cli new --lang python --prefix 127.0.0.1 myfunc1
+   faas-cli new --lang python --prefix 127.0.0.1:5000 myfunc1
    ```
 3. Módosítsd az első függvényt, hogy az hívja meg az újonnan létrehozott függvényt a Hello szöveggel és adja vissza eredményként az új függvény által visszaadott értékt.
 4. A függvények hívását az invoke utasítás meghívásával teheted meg, aminek a paraméterei sorban a következők: 
