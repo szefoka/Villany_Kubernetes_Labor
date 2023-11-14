@@ -55,7 +55,7 @@ A függvényke futását különböző, úgynevezett tracing megoldással követ
 
 11. Végül indítsd el a VM-et. Jobb gombbal kattintva választhatsz hogy általános, vagy headless (nem jelenik meg a VM képernyője) módban indítod. Headless mód esetén SSH-val tudsz hozzáférni, ami sokszor kényelmesebb tud lenni.
 12. Az ssh-hoz használd a következő parancsot, a VM felhasználója: labor, jelszava: labor.
-  ```
+  ```bash
   ssh labor@127.0.0.1 -p 10022
   ```  
 ## Környezet telepítése
@@ -68,7 +68,7 @@ A függvényke futását különböző, úgynevezett tracing megoldással követ
 4. Első alkalommal add ki a make install parancsot, ha valamilyen okból félbe kellett hagynod a labort és a VM-et leállítottad, akkor a make reset parancsot add ki.
 5. A make futtatása után az ip a paranccsal kérd le a VM-ed enp0s8 interfész címét. Ezen az IP-n keresztül  fogod elérni a VM-ben futó
  szolgáltatásokat.
-  ```
+  ```bash
   ip a
   ```
 6. Ezek után a /home/labor/functions mappában add ki a faas-cli parancsokat!
@@ -76,7 +76,7 @@ A függvényke futását különböző, úgynevezett tracing megoldással követ
 ## 1. Függvény létrehozása és használata
 ### 1.1 Python Hello függvény létrehozása
 - Elsőként jelentkezz be az OpenFaaS rendszerbe a faas-cli alkalmazás használatával. A felhasználóneved az admin lesz, míg a jelszavad a Hello.
-  ```
+  ```bash
   faas-cli login -u admin -p Hello -g localhost:31112
   ```
 - A faas-cli new paranccsal tudsz létrehozni új függvényt, melynek a --lang paraméterében megadva tudod kiválasztani a megfelelő nyelvet. A függvény nevének válassz egy alulvonásoktól mentes nevet, pl myfunc, vagy myfunc-1. A kubernetes által indított konténerek mellett egy docker registry konténer is fut. Ide fogod feltölteni a függvényed image-ét. Ezért a faas-cli parancshoz azt is add meg, hogy mely registry-be kerüljön a függvény a push parancs kiadására. Ehhez használd a --prefix 127.0.0.1:5000 lehetőséget.
@@ -86,7 +86,7 @@ A függvényke futását különböző, úgynevezett tracing megoldással követ
 - A parancs sikeres lefutására létrejön egy mappa és egy yml fájl, mindkettő a függvényed nevét viseli
 - A létrejött mappában találsz egy handler.py fájlt, melyben a függvényedet tudod módosítani és egy requirements.txt fájlt amiben a függvényhez való függőségeket tudod megadni
 - A függvényed az alább látható módon fog kinézni. Ez az egyszerű vüggvény a híváskor kapott értéket adja vissza. Nyugodtan módosítsd a függvényt, ha szeretnéd.
-  ```
+  ```python
   from function import invoke
 
   def handle(req, context):
@@ -98,39 +98,39 @@ A függvényke futását különböző, úgynevezett tracing megoldással követ
     return req
   ```
 - Build-eld a függvényt a faas-cli parancs segítségével, ahol a -f kapcsolóval tudod megadni hogy melyik yml fájlból készüljön a FaaS keretrendszerben futtatható függvénypéldány
-  ```
+  ```bash
   faas-cli build -f myfunc1.yml
   ```
 - Push-old a függvényt
-  ```
+  ```bash
   faas-cli push -f myfunc1.yml
   ```
 - Deploy-old a függvényt, melynek hatására az elindul a FaaS keretrendszerben. Itt figyelj arra, hogy a -g kapcsolóval a FaaS keretrendszer gateway komponensét szólítsd meg, hiszen csak így fogja tudni a keretrendszer, hogy egy új függvényt kell indítania
-  ```
+  ```bash
   faas-cli deploy -f myfunc1.yml -g localhost:31112
   ```
 
 ### 1.2 Hívd meg a függvényt
 A függvényt többféleképpen is meg tudod hívni.
 1. faas-cli invoke, ilyenkor szabadon írhatsz egy szöveget, majd a CTRL+D kombinációval tudod elküldeni a szöveget a függvényednek.
-    ```
+    ```bash
     faas-cli invoke myfunc1 -g localhost:31112
     ```
 3. curl - ebben az esetben ismerned kell a függvény elérési útját. Ehhez a kubectl get services -n openfaas parancsot add ki és keresd ki a gateway komponens belső IP címét és belső portját. Használhatod a kubernetes rendszer külső IP címét és a 31112 portot is. Ebben az esetben a függvény az < ip >:< port >/function/<függvényed neve> útvonalon érhető el
-    ```
+    ```bash
     curl localhost:31112/function/myfunc1  
     ```
 4. webes felület segítségével az invoke gombra kattintva, amit a VM-ed IP címe és a 31112 porton érsz el. Itt a felhasználónév és jelszó ugyanúgy admin - Hello. A host gépen futó internetböngészőben a < VM IP >:31112 címet keresd.
 
 ### 1.3 A függvény kiskálázása
 Terheld a függvényt a Hey programmal, 1 percig, nézd meg, hogy hány példányra skálázódik ki a függvény, ezt a webes felületen tudod a legkönnyebben nyomon követni a replicas felirat alatt látható a függvények aktuális példányszáma. hey -c 10 -z 60s <fuggveny eleresi utja>
-```
+```bash
 hey -c 10 -z 60s http://localhost:31112/function/myfunc1
 ```
 
 ## 2. Függvények láncolása
 1. Az előző feladat alapján hozz létre egy második python nyelvű függvényt.
-   ```
+   ```bash
    faas-cli new --lang python --prefix 127.0.0.1:5000 myfunc2
    ```
 2. Módosítsd az első függvényt, hogy az hívja meg az újonnan létrehozott függvényt a Hello szöveggel és adja vissza eredményként az új függvény által visszaadott értékt.
@@ -145,7 +145,7 @@ hey -c 10 -z 60s http://localhost:31112/function/myfunc1
    ![Alt text](https://github.com/szefoka/Villany_Kubernetes_Labor/blob/main/VM_Creation_Steps_Images/jaeger2.png)
 
    - A láncban az első függvény
-    ```
+    ```python
     from function import invoke
 
     def handle(req, context):
@@ -157,7 +157,7 @@ hey -c 10 -z 60s http://localhost:31112/function/myfunc1
         return invoke.invoke("myfunc2", req, context, False)
     ```
     - A láncban a második függvény
-    ```
+    ```python
     from function import invoke
     import time
     def handle(req, context):
@@ -171,7 +171,7 @@ hey -c 10 -z 60s http://localhost:31112/function/myfunc1
 
 ## 3. Aszinkron függvényhívás
 1. Alakítsd át az első függvényt, hogy aszinkron módon hívja meg a második függvényt.
-    ```
+    ```python
     from function import invoke
 
     def handle(req, context):
