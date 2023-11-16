@@ -63,7 +63,7 @@ A függvényke futását különböző, úgynevezett tracing megoldással követ
 2. Másold a /home/labor mappába a repo-ban lévő function_runtime mappát functions néven.
 3. Lépj be a Villany_Kubernetes_Labor/FaaS_Setup mappába.
   ```
-  cp -r Villany_Kubernetes_Labor/function_runtime /home/labor/functions
+  cp -r /home/labor/Villany_Kubernetes_Labor/function_runtime /home/labor/functions
   ```
 4. Első alkalommal add ki a make install parancsot, ha valamilyen okból félbe kellett hagynod a labort és a VM-et leállítottad, akkor a make reset parancsot add ki.
 5. A make futtatása után az ip a paranccsal kérd le a VM-ed enp0s8 interfész címét. Ezen az IP-n keresztül  fogod elérni a VM-ben futó
