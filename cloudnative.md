@@ -118,7 +118,7 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0')
 
 ```
-
+ed_receiver.py
 ```python
 import pika
 
@@ -141,3 +141,46 @@ channel.basic_consume(
 channel.start_consuming()
 ```
 
+Ebben a feladatrészben az elkészült alkalmazásokat Docker konténerekben fogjuk futtatni. Ehhez először készítenünk kell néhány Docker image-et, amelyekből a konténereket fogjuk példányosítani.
+Egy Docker image-et egy Dockerfile segítségével tudunk létrehozni. Esetünkben a Flask, requests, és Pika csomagokat fogjuk telepíteni. A python környezetet nem fogjuk, ugyanis egy python image-ből indulunk ki. Telepítéshez a python csomagkezelőjét, a pip-et használjuk.
+Az alkalmazásokon viszont szükséges lesz megváltoztatni a csatlakozási pontot, mivel a localhost elérési út már nem fog működni. A docker konténerek viszont név szerint elérik egymást ha egy saját hálózatot hozunk létre számukra. Így csak a megfelelő nevet kell beilleszteni a kapcsolódási parancsok paramétereként.
+
+Egy docker hálózat létrehozása a következő paranccsal történhet
+
+```bash
+docker network create -d bridge mynet
+```
+
+Az első példábna ismertetett initiator.py-hoz tartozó Dockerfile a következőképpen néz ki.
+
+```Dockerfile
+FROM python:3.6.15-slim-buster
+RUN pip3 install flask requests pika
+RUN useradd pythonuser -ms /bin/bash
+WORKDIR /home/pythonuser/app
+COPY initiator.py initiator.py
+CMD ["python", "initiator.py"]
+```
+
+Az image létrehozása a Dockerfile-ból a következő paranccsal lehetésges, ahol a konténer nevét a -t kapcsoló után adjuk meg
+```bash
+docker build -t flask_initiator .
+```
+A konténer futtatásához a következő parancsot adjuk ki, a --network kapcsolóval tudjuk kiválasztani a hálózatot amihez csatlakoztatni szeretnénk a konténert, a -p kapcsoló adja meg hogy a konténer belső portját melyik külső portra továbbítsuk, az -d kapcsoló pedig azt teszi lehetővé, hogy a konténer a háttérben fusson, tehát ne írja tele a képernyőnket.
+```bash
+docker run -d -p 5000:5000 --name initiator --network mynet flask_initiator
+```
+
+
+Fontos, hogy ne felejtsük el áttenni a rabbitmq konténerünket az újonnan létrehzott hálózatra.
+Ehhez törölhetjük és újraindíthatjuk a konténert az új hálózattal
+
+```bash
+docker rm -f some-rabbitmq
+docker run docker run -d --hostname my-rabbit --name some-rabbit --network mynet -p 5672:5672 rabbitmq:3-management
+```
+Ha egszerűbben szeretnénk, akkor pedig csak a létező konténert átmozgatjuk az új hálózatra
+```bash
+docker network connect mynet somerabbit
+```
+A többi példát is futtassuk konténerekben. Ehhez a fenti parancsokra támaszkodjunk.
