@@ -192,3 +192,8 @@ Ha egszerűbben szeretnénk, akkor pedig csak a létező konténert átmozgatjuk
 docker network connect mynet somerabbit
 ```
 A többi példát is futtassuk konténerekben. Ehhez a fenti parancsokra támaszkodjunk.
+A konténerben való futtatáskor nem fogjuk látni a programok kimenetét, ehhez használjuk a docker logs parancsát a következőképpen:
+
+```bash
+docker logs <konténernév>
+```
