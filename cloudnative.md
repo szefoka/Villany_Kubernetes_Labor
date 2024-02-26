@@ -2,7 +2,10 @@
 A labor során a hallgatók az alkalmazások konténerizációjával és a konténerek közötti kommunikációval ismerkednek meg.
 Egy micro-service környezetben az alkalmazások különböző kommunikációs mintát alkalmazhatnak. A laboron a szinkron, aszinkron és eseményvezérelt mintákkal ismerkedünk meg.
 
-##Szinkron hívások
+## Előkészületek
+A Labor elvégzéséhez (ha a példákat nem szeretnék módosítani) bármelyik Python3+ környezet és Docker telepítése szükséges a hallgatói gépekre.
+
+## Szinkron hívások
 Szinkron hívások esetén a kezdeményező köteles megvárni a választ, ekkor előfordulhat, hogy a hívó fél idle állapotban várakozik a válaszra, viszont a számára allokált erőforrásokat fogva tartja. Ebben az esetben egy HTTP GET/POST kérés egyszerűen alkalmazható. Nézzünk erre egy példát ami két komponensből áll. A példák python nyelven kerültek implementálásra, és a Flask webes keretrendszert használják.
 
 initiator.py
