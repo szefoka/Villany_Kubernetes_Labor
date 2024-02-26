@@ -94,6 +94,8 @@ channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=T
 channel.start_consuming()
 ```
 
+Itt érdemes lehet kipróbálni, hogy két példányt is indítunk az async_receiver.py-ból. Mit tapasztalunk?
+
 ##Eseményvezérelt tervezés
 Az eddigiek során arra láttunk példát, hogy egy fél pontosan egy másikat megszólít meg. A következő példában arra mutatunk egy példát, hogy egy kezdeményező üzenetére egyszerre több szolgáltatás is elér. Ebben az esetben a rabbitmq-ban egy exchange-et definiálunk amely dönt arról, hogy az egyes üzenet mely üzenetsorokba kerüljön, mivel azt szeretnénk, hogy az üzenet minden feliratkozóhoz eljusson, így a fanout lehetőséget adtuk meg. Azt is láthatjuk az alkalmazásokban, hogy nem nevesített üzenetsort hoztunk létre, így mindenki egy véletlenül inicializált nevű üzenetsort fog használni, ezzel elérve, hogy semelyik alkalmazás ne használja ugyanazt az üzenetsort.
 
@@ -144,6 +146,9 @@ channel.basic_consume(
 channel.start_consuming()
 ```
 
+Itt is érdemes kipróbálni két példányban indítani az ed_receiver.py programot. Mi a tapasztalat? Mi a különbség az async verzióhoz képest?
+
+## Alkalmazások konténerizálása
 Ebben a feladatrészben az elkészült alkalmazásokat Docker konténerekben fogjuk futtatni. Ehhez először készítenünk kell néhány Docker image-et, amelyekből a konténereket fogjuk példányosítani.
 Egy Docker image-et egy Dockerfile segítségével tudunk létrehozni. Esetünkben a Flask, requests, és Pika csomagokat fogjuk telepíteni. A python környezetet nem fogjuk, ugyanis egy python image-ből indulunk ki. Telepítéshez a python csomagkezelőjét, a pip-et használjuk.
 Az alkalmazásokon viszont szükséges lesz megváltoztatni a csatlakozási pontot, mivel a localhost elérési út már nem fog működni. A docker konténerek viszont név szerint elérik egymást ha egy saját hálózatot hozunk létre számukra. Így csak a megfelelő nevet kell beilleszteni a kapcsolódási parancsok paramétereként.
