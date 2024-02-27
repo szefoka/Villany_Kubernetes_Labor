@@ -6,6 +6,7 @@ Egy micro-service környezetben az alkalmazások különböző kommunikációs m
 A Labor elvégzéséhez (ha a példákat nem szeretnék módosítani) bármelyik Python3+ környezet és Docker telepítése szükséges a hallgatói gépekre.
 A docker telepítését a következő linken található forrásból végezzük:
 https://docs.docker.com/engine/install/
+
 Ha esetleg valakinek már régebbről telepítve van a docker csomag, viszont még a compose parancs nem támogatott, akkor a következővel tudja telepíteni a szükséges modult:
 ```bash
 sudo curl -L "https://github.com/docker/compose/releases/download/v2.12.2/docker-compose-$(uname -s)-$(uname -m)"  -o /usr/local/bin/docker-compose
