@@ -51,6 +51,12 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0', port=6000)
 ```
 
+A kipróbáláshoz a következő parancsot futtassuk:
+```bash
+curl -d Hello http://localhost:5000/
+```
+Ezzel egy Hello üzenetet küldünk a szolgáltatásnak. A többi esetben is ezt a parancsot használjuk.
+
 ## Aszinkron hívások
 Szinrkon hívásokkal ellentétben az aszinkron hívások használatakor a kezdeményező azonnal visszatérhet. Ilyenkor természetesen a választ valahonnan máshonnan kell megszerezni, erre lehetőség van egy külső adattároló/adatbázis használatával, de más megoldások is elképzelhetőek, mint egy e-mail kiküldése a válasszal. Ez a megoldás egy központi elemet igényel, ami valahogyan átveszi a kérést a hívó oldaltól és továbbítja a meghívott félnek. Általában üzenetsorokkal valósítjuk meg ezt a fajta kommunikácós modellt. A példában egy rabbitmq üzenetsorral kötjük össze a két modult. A kódrészletekben a hívó és fogadó felek között egy üzenetsort definiálunk az üzenetek küldésére. Ha több alkalmazás is ugyanazt az üzenetsort használja, akkor Round-Robin módon férnek hozzá az üzenetsorhoz.
 
