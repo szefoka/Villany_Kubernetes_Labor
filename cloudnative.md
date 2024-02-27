@@ -4,6 +4,14 @@ Egy micro-service környezetben az alkalmazások különböző kommunikációs m
 
 ## Előkészületek
 A Labor elvégzéséhez (ha a példákat nem szeretnék módosítani) bármelyik Python3+ környezet és Docker telepítése szükséges a hallgatói gépekre.
+A docker telepítését a következő linken található forrásból végezzük:
+https://docs.docker.com/engine/install/
+Ha esetleg valakinek már régebbről telepítve van a docker csomag, viszont még a compose parancs nem támogatott, akkor a következővel tudja telepíteni a szükséges modult:
+```bash
+sudo curl -L "https://github.com/docker/compose/releases/download/v2.12.2/docker-compose-$(uname -s)-$(uname -m)"  -o /usr/local/bin/docker-compose
+sudo mv /usr/local/bin/docker-compose /usr/bin/docker-compose
+sudo chmod +x /usr/bin/docker-compose
+```
 
 ## Szinkron hívások
 Szinkron hívások esetén a kezdeményező köteles megvárni a választ, ekkor előfordulhat, hogy a hívó fél idle állapotban várakozik a válaszra, viszont a számára allokált erőforrásokat fogva tartja. Ebben az esetben egy HTTP GET/POST kérés egyszerűen alkalmazható. Nézzünk erre egy példát ami két komponensből áll. A példák python nyelven kerültek implementálásra, és a Flask webes keretrendszert használják.
