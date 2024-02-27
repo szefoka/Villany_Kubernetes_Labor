@@ -160,14 +160,23 @@ docker network create -d bridge mynet
 ```
 
 Az első példábna ismertetett initiator.py-hoz tartozó Dockerfile a következőképpen néz ki.
+- FROM - melyik image-ből indulunk ki.
+- RUN - parancs kiadása
+- WORKDIR - Aktuális mappa kiválasztása
+- USER - Konténerben a parancsok futtatását végző felhasználó, alapból amit az alap image megad, vagy root
+- COPY - fájl bemásolása a host-ról a konténerbe, megadott útvonalre
+- CMD - egy lista amiből a parancs összeáll
+
+Mivel a logok között nem fognak megjelenni a print-elt szövegek, ezért adjuk meg a -u kapcsolót a program futtatásakor, ezzel ezek a sorok is megjelennek.
 
 ```Dockerfile
 FROM python:3.6.15-slim-buster
 RUN pip3 install flask requests pika
 RUN useradd pythonuser -ms /bin/bash
 WORKDIR /home/pythonuser/app
+USER pythonuser
 COPY initiator.py initiator.py
-CMD ["python", "initiator.py"]
+CMD ["python", "-u" "initiator.py"]
 ```
 
 Az image létrehozása a Dockerfile-ból a következő paranccsal lehetésges, ahol a konténer nevét a -t kapcsoló után adjuk meg
@@ -197,3 +206,47 @@ A konténerben való futtatáskor nem fogjuk látni a programok kimenetét, ehhe
 ```bash
 docker logs <konténernév>
 ```
+## Indítás automatizálása
+
+Hogy ne kelljen mindig a konténereket külön külön kézzel indítanunk, meg aztán le is törölnünk, a Docker egy compose paranccsal is rendelkezik, amely egy yaml fájlt olvas be és az alapján elindítja a konténereket, létrehozza és csatolja a hálózatot.
+
+A szinkron megoldást leíró docker compose yaml a következő:
+sync_compose.yaml:
+```yaml
+networks:
+  sync_network:
+    driver: bridge
+
+services:
+  sync_sender:
+    image: flask_initiator
+    container_name: initiator
+    depends_on:
+      - sync_receiver
+    ports:
+      - 5000:5000
+    networks:
+      - sync_network
+  sync_receiver:
+    image: flask_receiver
+    container_name: receiver
+    networks:
+      - sync_network
+```
+
+A fenti yaml fájlban egyrészt egy hálózatot hozunk létre, aminek a neve sync_network lesz és egy linux bridge komponensen keresztül valósítja meg a konténerek kommunikációját.
+Másrészt a services kulcs alatt a futtatandó konténereket határozzuk meg. Ahol egy nevet tudunk nekik választani, viszont ez nem lesz azonos a konténer nevével, viszont alapesetben ebből származtatja a példányosított konténerek neiveit. A  konténernél adjuk meg az image-et, a konténer nevét, a szükséges belső portok külső láthatóságát, ahol kell, és a használni kívánt hálózatot. A depends_on lehetőség ebben a feladatban nem igazán szükséges, viszont a másik két példa esetén érdemes lehet, hogy először a message queue induljon el és csak azt követően a rajta keresztül kommunikáló podok.
+
+Hozzunk létre mindhárom példához egy-egy docker compose yaml fájlt és próbáljuk is ki őket.
+Az elkészült fájlokból a környezet példányosítása a következő paranccsal történhet, ahol -d a háttérben való futtatást jelenti:
+
+```bash
+docker-compose -f sync_compose.yaml up -d
+```
+
+A környezet törléséhez pedig az alábbi parancs kiadása szükséges:
+
+```bash
+docker-compose -f sync_compose.yaml down
+```
+Nézzük meg hogy a depends_on lehetőséggel és anélkül milyen sorrendben jönnek létre és törlődnek a konténerek.
