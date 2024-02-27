@@ -51,7 +51,7 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0', port=6000)
 ```
 
-##Aszinkron hívások
+## Aszinkron hívások
 Szinrkon hívásokkal ellentétben az aszinkron hívások használatakor a kezdeményező azonnal visszatérhet. Ilyenkor természetesen a választ valahonnan máshonnan kell megszerezni, erre lehetőség van egy külső adattároló/adatbázis használatával, de más megoldások is elképzelhetőek, mint egy e-mail kiküldése a válasszal. Ez a megoldás egy központi elemet igényel, ami valahogyan átveszi a kérést a hívó oldaltól és továbbítja a meghívott félnek. Általában üzenetsorokkal valósítjuk meg ezt a fajta kommunikácós modellt. A példában egy rabbitmq üzenetsorral kötjük össze a két modult. A kódrészletekben a hívó és fogadó felek között egy üzenetsort definiálunk az üzenetek küldésére. Ha több alkalmazás is ugyanazt az üzenetsort használja, akkor Round-Robin módon férnek hozzá az üzenetsorhoz.
 
 Ehhez indítsunk egy Docker-ben futó rabbitmq üzenetsort, így legalább nem kell semmit sem telepíteni a számítógépre és minden használatra készen van.
@@ -105,7 +105,7 @@ channel.start_consuming()
 
 Itt érdemes lehet kipróbálni, hogy két példányt is indítunk az async_receiver.py-ból. Mit tapasztalunk?
 
-##Eseményvezérelt tervezés
+## Eseményvezérelt tervezés
 Az eddigiek során arra láttunk példát, hogy egy fél pontosan egy másikat megszólít meg. A következő példában arra mutatunk egy példát, hogy egy kezdeményező üzenetére egyszerre több szolgáltatás is elér. Ebben az esetben a rabbitmq-ban egy exchange-et definiálunk amely dönt arról, hogy az egyes üzenet mely üzenetsorokba kerüljön, mivel azt szeretnénk, hogy az üzenet minden feliratkozóhoz eljusson, így a fanout lehetőséget adtuk meg. Azt is láthatjuk az alkalmazásokban, hogy nem nevesített üzenetsort hoztunk létre, így mindenki egy véletlenül inicializált nevű üzenetsort fog használni, ezzel elérve, hogy semelyik alkalmazás ne használja ugyanazt az üzenetsort.
 
 ed_initiator.py
