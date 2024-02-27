@@ -263,6 +263,9 @@ Nézzük meg hogy a depends_on lehetőséggel és anélkül milyen sorrendben j�
 ## Források
 
 https://www.rabbitmq.com/tutorials/tutorial-one-python
+
 https://www.rabbitmq.com/tutorials/tutorial-three-python#exchanges
+
 https://docs.docker.com/reference/dockerfile/
+
 https://docs.docker.com/compose/compose-file/compose-file-v3/#network-configuration-reference
