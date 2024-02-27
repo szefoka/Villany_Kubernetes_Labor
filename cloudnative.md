@@ -259,3 +259,10 @@ A környezet törléséhez pedig az alábbi parancs kiadása szükséges:
 docker-compose -f sync_compose.yaml down
 ```
 Nézzük meg hogy a depends_on lehetőséggel és anélkül milyen sorrendben jönnek létre és törlődnek a konténerek.
+
+## Források
+
+https://www.rabbitmq.com/tutorials/tutorial-one-python
+https://www.rabbitmq.com/tutorials/tutorial-three-python#exchanges
+https://docs.docker.com/reference/dockerfile/
+https://docs.docker.com/compose/compose-file/compose-file-v3/#network-configuration-reference
