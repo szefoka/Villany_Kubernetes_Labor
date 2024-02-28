@@ -251,6 +251,25 @@ services:
 
 A fenti yaml fájlban egyrészt egy hálózatot hozunk létre, aminek a neve sync_network lesz és egy linux bridge komponensen keresztül valósítja meg a konténerek kommunikációját.
 Másrészt a services kulcs alatt a futtatandó konténereket határozzuk meg. Ahol egy nevet tudunk nekik választani, viszont ez nem lesz azonos a konténer nevével, viszont alapesetben ebből származtatja a példányosított konténerek neiveit. A  konténernél adjuk meg az image-et, a konténer nevét, a szükséges belső portok külső láthatóságát, ahol kell, és a használni kívánt hálózatot. A depends_on lehetőség ebben a feladatban nem igazán szükséges, viszont a másik két példa esetén érdemes lehet, hogy először a message queue induljon el és csak azt követően a rajta keresztül kommunikáló podok.
+Fontos továbbá hogy a depends_on esetén megadhatunk feltételeket is:
+service_started, service_healthy, service_completed_successfully
+- A service_started alapértelmezetten használt, csak annyit néz, hogy elindult-e a konténer.
+- A service_healthy azt nézi, hogy hogy a konténer megfelel-e valamilyen healthcheck-nek, ehhez viszont a konténer amitől függünk egy healthcheck beállítással kell rendelkezzen. Erre példa a docker compose fájlon belül:
+```yaml
+#initator es receiver kontenerek leirojaban#
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+---
+#rabbitmq kontener leirojaban#
+
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
+```
+- A service_completed_successfully esetben pedig azt nezzuk hogy valamilyen előfeladat lefutott-e. Erre a labor során nem térünk ki.
 
 Hozzunk létre mindhárom példához egy-egy docker compose yaml fájlt és próbáljuk is ki őket.
 Az elkészült fájlokból a környezet példányosítása a következő paranccsal történhet, ahol -d a háttérben való futtatást jelenti:
