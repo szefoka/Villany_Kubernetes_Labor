@@ -3,6 +3,9 @@
 A labor során a hallgatók megismerkednek egy rendszert készítenek, amely képes a GitHub-on tárolt forrásokat a Kubernetes Cluster-be telepíteni az ArgoCD modul segítségével.
 
 ## Előkészületek
+
+A labor során a GitHub actions-t fogják a hallgatók használni és a Docker Hub-ra fogják a konténer image-eiket feltölteni. Ehhez szükség lesz egy GitHub és egy Docker Hub profilra. Előbbihez az előző laboron már regisztrálták magukat, viszont az utóbbihoz nem biztos, hogy mindenkinek van profilja regisztrálva. Ha ez így lenne, akkor regisztráljon egyet magának. https://hub.docker.com/ -> sign up gomb (jobb felső sarok)
+
 ### Kubernetes telepítése VirtualBox VM-be
 
 ### ArgoCD telepítése Kubernetes-re
@@ -104,6 +107,8 @@ spec:
 ```
 
 A paraméterezéshez szükséges values.yaml fájl forrása, ahol az APP_VERSION a push-olásokat követően változni fog.
+
+### GitHub action létrehozása a konténer image build-eléséhez és docker hub-ba való feltöltéséhez.
 
 ```yaml
 env:
