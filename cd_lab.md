@@ -28,9 +28,11 @@ sudo apt-get install docker-ce
 ```
 
 Minikube telepítése a következő linken érhető el:
+
 https://minikube.sigs.k8s.io/docs/start/
 
 A kubectl telepítése az alábbi linken érhető el:
+
 https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
 
 A minikube start parancsot kiadva elindul a helyi kubernetes példány.
@@ -46,6 +48,12 @@ kubectl -n argocd patch secret argocd-secret \
     -p '{"stringData": {"admin.password": "$2a$10$mivhwttXM0U5eBrZGtAG8.VSRL1l9cZNAmaSaqotIzXRBRwID1NT.",
         "admin.passwordMtime": "'$(date +%FT%T)'"
     }}'
+```
+
+Ezt követően kihozzuk a minikube-ból az argocd-re mutató portot és a linkre kattintva a böngészőben meg is nyílik az argocd felülete, ahol admin-admin párossal be is jelentkezhetünk.
+
+```bash
+minkube service -n argocd argocd-server
 ```
 
 ## Tesztalkalmazás elkészítése
