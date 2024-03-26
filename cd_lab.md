@@ -6,9 +6,47 @@ A labor során a hallgatók megismerkednek egy rendszert készítenek, amely ké
 
 A labor során a GitHub actions-t fogják a hallgatók használni és a Docker Hub-ra fogják a konténer image-eiket feltölteni. Ehhez szükség lesz egy GitHub és egy Docker Hub profilra. Előbbihez az előző laboron már regisztrálták magukat, viszont az utóbbihoz nem biztos, hogy mindenkinek van profilja regisztrálva. Ha ez így lenne, akkor regisztráljon egyet magának. https://hub.docker.com/ -> sign up gomb (jobb felső sarok)
 
-### Kubernetes telepítése VirtualBox VM-be
+### Minikube telepítése
+A labort minikube környezetben végezzük. Ehhez szükség van a docker, a minikube és a kubectl csomagok telepítésére.
 
-### ArgoCD telepítése Kubernetes-re
+Docker telepítése a következő parancsokkal
+
+```bash
+sudo apt-get update
+sudo apt-get install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add the repository to Apt sources:
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+sudo apt-get install docker-ce
+```
+
+Minikube telepítése a következő linken érhető el:
+https://minikube.sigs.k8s.io/docs/start/
+
+A kubectl telepítése az alábbi linken érhető el:
+https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
+
+A minikube start parancsot kiadva elindul a helyi kubernetes példány.
+
+### ArgoCD telepítése minikube-ra
+
+```bash
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+
+kubectl -n argocd patch secret argocd-secret \
+    -p '{"stringData": {"admin.password": "$2a$10$mivhwttXM0U5eBrZGtAG8.VSRL1l9cZNAmaSaqotIzXRBRwID1NT.",
+        "admin.passwordMtime": "'$(date +%FT%T)'"
+    }}'
+```
 
 ## Tesztalkalmazás elkészítése
 A labor során a hallgatók egy Python alkalmazást fognak ArgoCD segítségével a Kubernetes cluster-ben elindítani. A minimum szükséges fájlok alább láthatóak. Ettől természetesen eltérhetnek a hallgatók, ha szeretnének valamilyen "izgalmasabb" alkalmazást megvalósítani.
