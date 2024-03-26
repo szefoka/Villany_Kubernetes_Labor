@@ -43,6 +43,69 @@ A Kubernetes-ben futtatott alkalmazásokhoz felveszünk egy deployment és egy s
 A deployment lehetővé teszi a pod-ok indítását és ezen felül figyel arra is, hogy ha esetleg egy pod valamilyen okoktól fogva megsemmisülnek, akkor azt újraindítsa.
 A service erőforrás egy hálózati végpont (IP - Port) mögé rejti a választott deployment által indított pod-okat. Ezt a párosítást a metadata mezőkben megadott label értékekkel valósítjuk meg. 
 A Kubernetes által használt yaml fájl-ok jól le tudják írni az erőforrásokat, viszont ezekben fix értékek szerepelnek, nem paraméterezhetőek egyszerűen. Emiatt a labor során ahelyett, hogy Kubernetes yaml fájlokat használnánk, inkább a Helm által paraméterezhető yaml fájlokat fogunk írni, így mindig a legújabb konténer image-et tudjuk letölteni.
-```yaml
 
+A deployment-et leíró yaml fájl. Figyeljük meg, ${{ .Values.env.APP_VERSION }} értéket. Ezt a helm values.yaml fájljából veszi. A values fájlba egyébként több értéket is beleírhatnánk és jobban is paraméterezhetnénk a yaml fájljainkat.
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argo-test-app1
+spec:
+  selector:
+    matchLabels:
+      app: argo-test-app1
+  template:
+    metadata:
+      labels:
+        app: argo-test-app1
+    spec:
+      containers:
+        - name: argo-test-app1
+          image: szefoka/argo-test-app1:{{ .Values.env.APP_VERSION }}
+          ports:
+            - name: http
+              containerPort: 5000
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+                path: /health
+                port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+                path: /health
+                port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+```
+
+A service.yaml fájl forrása
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: argo-test-app1
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 5000
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: argo-test-app1
+```
+
+A paraméterezéshez szükséges values.yaml fájl forrása, ahol az APP_VERSION a push-olásokat követően változni fog.
+
+```yaml
+env:
+  APP_VERSION: 9ef1ff41efd4f9b8e157fe9c7274c3b32101fea0
 ```
