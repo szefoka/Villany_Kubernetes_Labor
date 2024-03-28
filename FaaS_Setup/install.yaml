@@ -13,24 +13,45 @@
         update_cache: true
       become: true
 
-    - name: Add gpg for Kubernetes
-      apt_key:
-        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-        state: present
+    - name: Create apt keyrings dir
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+    #- name: Add Kubernetes GPG key
+    #  ansible.builtin.get_url:
+    #    url: https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key
+    #    dest: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    #    mode: '0644'
+    #    force: true
+
+    - name: Add Kubernetes GPG key
+      ansible.builtin.apt_key:
+        url: https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key
+        keyring: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
     - name: Add Kubernetes apt repository
       apt_repository:
-        repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+        filename: kubernetes.list
+        repo: 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /'
         state: present
      
     - name: Install Kubernetes components
       apt:
         pkg:
-          - kubelet=1.21.7-00
-          - kubeadm=1.21.7-00
-          - kubectl=1.21.7-00
+          - kubelet
+          - kubeadm
+          - kubectl
         state: present
         update_cache: true
+        allow_change_held_packages: false
+
+    - name: Enable Kubelet service
+      ansible.builtin.systemd:
+        enabled: true
+        name: kubelet
+
       become: true
 
     - name: Add Docker gpg
@@ -43,13 +64,31 @@
         repo: deb [arch=amd64] https://download.docker.com/linux/debian stretch stable
         state: present
 
-    - name: Install Docker
+    - name: Install Docker and containerd
       apt:
         pkg:
+          - containerd.io
           - docker-ce
         state: present
         update_cache: true
       become: true
+
+    - name: Create containerd config dir
+      ansible.builtin.file:
+        path: /etc/containerd
+        state: directory
+        mode: '0755'
+
+    - name: Write containerd config
+      ansible.builtin.shell:
+        cmd: containerd config default>/etc/containerd/config.toml
+
+    - name: Enable and Restart service containerd
+      ansible.builtin.systemd:
+        state: restarted
+        name: containerd
+        enabled: true
+        daemon-reload: yes
 
     - name: Add Golang repository key
       apt_key:
