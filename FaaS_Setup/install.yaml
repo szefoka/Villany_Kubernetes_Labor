@@ -19,13 +19,6 @@
         state: directory
         mode: '0755'
 
-    #- name: Add Kubernetes GPG key
-    #  ansible.builtin.get_url:
-    #    url: https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key
-    #    dest: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-    #    mode: '0644'
-    #    force: true
-
     - name: Add Kubernetes GPG key
       ansible.builtin.apt_key:
         url: https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key
@@ -45,10 +38,11 @@
           - kubectl
         state: present
         update_cache: true
-        allow_change_held_packages: false
+        #allow_change_held_packages: false
 
     - name: Enable Kubelet service
       ansible.builtin.systemd:
+        state: restarted
         enabled: true
         name: kubelet
 
@@ -59,9 +53,14 @@
         url: https://download.docker.com/linux/debian/gpg
         state: present
 
+    - name: Get ubuntu version
+      ansible.builtin.shell: lsb_release -cs
+      register: ubuntu_version
+
     - name: Add Docker repository
       apt_repository:
-        repo: deb [arch=amd64] https://download.docker.com/linux/debian stretch stable
+        #repo: deb [arch=amd64] https://download.docker.com/linux/debian stretch stable
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release | lower }} stable
         state: present
 
     - name: Install Docker and containerd
@@ -97,7 +96,7 @@
 
     - name: Add Golang repository
       apt_repository:
-        repo: deb https://ppa.launchpadcontent.net/longsleep/golang-backports/ubuntu focal main 
+        repo: deb https://ppa.launchpadcontent.net/longsleep/golang-backports/ubuntu {{ ansible_distribution_release | lower }} main 
         state: present
 
     - name: Install Golang
