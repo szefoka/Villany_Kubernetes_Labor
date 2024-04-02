@@ -92,7 +92,7 @@ A Kubernetes-ben futtatott alkalmazásokhoz felveszünk egy deployment és egy s
 A deployment lehetővé teszi a pod-ok indítását és ezen felül figyel arra is, hogy ha esetleg egy pod valamilyen okoktól fogva megsemmisülnek, akkor azt újraindítsa.
 A service erőforrás egy hálózati végpont (IP - Port) mögé rejti a választott deployment által indított pod-okat. Ezt a párosítást a metadata mezőkben megadott label értékekkel valósítjuk meg. 
 A Kubernetes által használt yaml fájl-ok jól le tudják írni az erőforrásokat, viszont ezekben fix értékek szerepelnek, nem paraméterezhetőek egyszerűen. Emiatt a labor során ahelyett, hogy Kubernetes yaml fájlokat használnánk, inkább a Helm által paraméterezhető yaml fájlokat fogunk írni, így mindig a legújabb konténer image-et tudjuk letölteni.
-Ezeknek a fájloknak készítsunk egy másik könyvtárat, pl helm néven. A helm könyvtáron belül legyen egy values.yaml fájl és egy template mappa. A template mappa tartalmazza a következőkben bemutatott két fájlt - deployment.yaml és service.yaml. A Helm egy Chart.yaml fájlt is definiál amiben a Chartról találhatók információk.
+Ezeknek a fájloknak készítsunk egy másik könyvtárat, pl helm néven. A helm könyvtáron belül legyen egy values.yaml fájl és egy templates mappa. A templates mappa tartalmazza a következőkben bemutatott két fájlt - deployment.yaml és service.yaml. A Helm egy Chart.yaml fájlt is definiál amiben a Chartról találhatók információk.
 A deployment-et leíró yaml fájl. Figyeljük meg, ${{ .Values.env.APP_VERSION }} értéket. Ezt a helm values.yaml fájljából veszi. A values fájlba egyébként több értéket is beleírhatnánk és jobban is paraméterezhetnénk a yaml fájljainkat.
 ```yaml
 apiVersion: apps/v1
