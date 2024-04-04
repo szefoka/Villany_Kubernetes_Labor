@@ -1,0 +1,21 @@
+- name: Install FaaS Environment
+  hosts: "localhost"
+  tasks:
+    - name: Git clone OpenFaaS repository
+      ansible.builtin.git:
+        repo: https://github.com/openfaas/faas-netes.git
+        dest: /tmp/faas-netes
+
+    - name: Create openfaas namespaces
+      command: kubectl apply -f https://raw.githubusercontent.com/openfaas/faas-netes/master/namespaces.yml
+
+    - name: Create basic-auth for OpenFaaS
+      command: kubectl -n openfaas create secret generic basic-auth --from-literal=basic-auth-user=admin --from-literal=basic-auth-password=Hello
+
+    - name: Install OpenFaaS
+      command: kubectl apply -f ./
+      args:
+        chdir: /tmp/faas-netes/yaml
+
+    - name: Install Jaeger
+      command: kubectl apply -f https://raw.githubusercontent.com/szefoka/Villany_Kubernetes_Labor/main/yaml/jaegerstack.yaml
