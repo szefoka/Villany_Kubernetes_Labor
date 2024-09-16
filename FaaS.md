@@ -76,6 +76,13 @@ A függvényke futását különböző, úgynevezett tracing megoldással követ
   ```
 6. Ezek után a /home/labor/functions mappában add ki a faas-cli parancsokat!
 
+Csoportok és gépek:
+1. c220g1-030623.wisc.cloudlab.us
+2. c220g5-111010.wisc.cloudlab.us
+3. c220g5-110931.wisc.cloudlab.us
+4. c220g1-030614.wisc.cloudlab.us
+5. c220g5-120124.wisc.cloudlab.us
+
 ## 1. Függvény létrehozása és használata
 ### 1.1 Python Hello függvény létrehozása 
 #### A bejelentkezésre nincs szükség, ugorj a következő pontra
