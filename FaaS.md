@@ -77,7 +77,8 @@ A függvényke futását különböző, úgynevezett tracing megoldással követ
 6. Ezek után a /home/labor/functions mappában add ki a faas-cli parancsokat!
 
 ## 1. Függvény létrehozása és használata
-### 1.1 Python Hello függvény létrehozása (ez már megtörtént a gépek inicializálásakor, nem kell bejelentkezned)
+### 1.1 Python Hello függvény létrehozása 
+#### A bejelentkezésre nincs szükség, ugorj a következő pontra
 - Elsőként jelentkezz be az OpenFaaS rendszerbe a faas-cli alkalmazás használatával. A felhasználóneved az admin lesz, míg a jelszavad pedig a következőképpen kapod meg.
   ```bash
   faas-cli login -u admin -p Hello -g localhost:31112
