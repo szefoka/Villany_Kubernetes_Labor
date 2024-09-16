@@ -77,14 +77,14 @@ A függvényke futását különböző, úgynevezett tracing megoldással követ
 6. Ezek után a /home/labor/functions mappában add ki a faas-cli parancsokat!
 
 ## 1. Függvény létrehozása és használata
-### 1.1 Python Hello függvény létrehozása
-- Elsőként jelentkezz be az OpenFaaS rendszerbe a faas-cli alkalmazás használatával. A felhasználóneved az admin lesz, míg a jelszavad a Hello.
+### 1.1 Python Hello függvény létrehozása (ez már megtörtént a gépek inicializálásakor, nem kell bejelentkezned)
+- Elsőként jelentkezz be az OpenFaaS rendszerbe a faas-cli alkalmazás használatával. A felhasználóneved az admin lesz, míg a jelszavad pedig a következőképpen kapod meg.
   ```bash
   faas-cli login -u admin -p Hello -g localhost:31112
   ```
-- A faas-cli new paranccsal tudsz létrehozni új függvényt, melynek a --lang paraméterében megadva tudod kiválasztani a megfelelő nyelvet. A függvény nevének válassz egy alulvonásoktól mentes nevet, pl myfunc, vagy myfunc-1. A kubernetes által indított konténerek mellett egy docker registry konténer is fut. Ide fogod feltölteni a függvényed image-ét. Ezért a faas-cli parancshoz azt is add meg, hogy mely registry-be kerüljön a függvény a push parancs kiadására. Ehhez használd a --prefix 127.0.0.1:5000 lehetőséget.
+- A faas-cli new paranccsal tudsz létrehozni új függvényt, melynek a --lang paraméterében megadva tudod kiválasztani a megfelelő nyelvet. A függvény nevének válassz egy alulvonásoktól mentes nevet, pl myfunc-1. A faas-cli parancshoz azt is add meg, hogy mely registry-be kerüljön a függvény a push parancs kiadására. Ehhez használd a --prefix szefoka lehetőséget.
   ```
-  faas-cli new --lang python --prefix 127.0.0.1:5000 myfunc1
+  faas-cli new --lang python --prefix szefoka <neptun>-myfunc1
   ```
 - A parancs sikeres lefutására létrejön egy mappa és egy yml fájl, mindkettő a függvényed nevét viseli
 - A létrejött mappában találsz egy handler.py fájlt, melyben a függvényedet tudod módosítani és egy requirements.txt fájlt amiben a függvényhez való függőségeket tudod megadni
@@ -102,39 +102,43 @@ A függvényke futását különböző, úgynevezett tracing megoldással követ
   ```
 - Build-eld a függvényt a faas-cli parancs segítségével, ahol a -f kapcsolóval tudod megadni hogy melyik yml fájlból készüljön a FaaS keretrendszerben futtatható függvénypéldány
   ```bash
-  faas-cli build -f myfunc1.yml
+  faas-cli build -f <neptun>-myfunc1.yml
   ```
 - Push-old a függvényt
   ```bash
-  faas-cli push -f myfunc1.yml
+  faas-cli push -f <neptun>-myfunc1.yml
   ```
 - Deploy-old a függvényt, melynek hatására az elindul a FaaS keretrendszerben. Itt figyelj arra, hogy a -g kapcsolóval a FaaS keretrendszer gateway komponensét szólítsd meg, hiszen csak így fogja tudni a keretrendszer, hogy egy új függvényt kell indítania
   ```bash
-  faas-cli deploy -f myfunc1.yml -g localhost:31112
+  faas-cli deploy -f <neptun>-myfunc1.yml -g localhost:31112
   ```
 
 ### 1.2 Hívd meg a függvényt
 A függvényt többféleképpen is meg tudod hívni.
 1. faas-cli invoke, ilyenkor szabadon írhatsz egy szöveget, majd a CTRL+D kombinációval tudod elküldeni a szöveget a függvényednek.
     ```bash
-    faas-cli invoke myfunc1 -g localhost:31112
+    faas-cli invoke <neptun>-myfunc1 -g localhost:31112
     ```
 3. curl - ebben az esetben ismerned kell a függvény elérési útját. Ehhez a kubectl get services -n openfaas parancsot add ki és keresd ki a gateway komponens belső IP címét és belső portját. Használhatod a kubernetes rendszer külső IP címét és a 31112 portot is. Ebben az esetben a függvény az < ip >:< port >/function/<függvényed neve> útvonalon érhető el
     ```bash
-    curl localhost:31112/function/myfunc1  
+    curl localhost:31112/function/<neptun>-myfunc1  
     ```
-4. webes felület segítségével az invoke gombra kattintva, amit a VM-ed IP címe és a 31112 porton érsz el. Itt a felhasználónév és jelszó ugyanúgy admin - Hello. A host gépen futó internetböngészőben a < VM IP >:31112 címet keresd.
+4. webes felület segítségével az invoke gombra kattintva, amit a VM-ed IP címe és a 31112 porton érsz el. Itt a felhasználónév admin a jelszó pedig a lenti paranccsal kapható meg. A host gépen futó internetböngészőben a < VM IP >:31112 címet keresd.
+```bash
+PASSWORD=$(kubectl -n openfaas get secret basic-auth -o jsonpath="{.data.basic-auth-password}" | base64 --decode) && \
+echo "OpenFaaS admin password: $PASSWORD"
+```
 
 ### 1.3 A függvény kiskálázása
 Terheld a függvényt a Hey programmal, 1 percig, nézd meg, hogy hány példányra skálázódik ki a függvény, ezt a webes felületen tudod a legkönnyebben nyomon követni a replicas felirat alatt látható a függvények aktuális példányszáma. hey -c 10 -z 60s <fuggveny eleresi utja>
 ```bash
-hey -c 10 -z 60s http://localhost:31112/function/myfunc1
+hey -c 10 -z 60s http://localhost:31112/function/<neptun>-myfunc1
 ```
 
 ## 2. Függvények láncolása
 1. Az előző feladat alapján hozz létre egy második python nyelvű függvényt.
    ```bash
-   faas-cli new --lang python --prefix 127.0.0.1:5000 myfunc2
+   faas-cli new --lang python --prefix szefoka <neptun>-myfunc2
    ```
 2. Módosítsd az első függvényt, hogy az hívja meg az újonnan létrehozott függvényt a Hello szöveggel és adja vissza eredményként az új függvény által visszaadott értékt.
 3. A függvények hívását az invoke utasítás meghívásával teheted meg, aminek a paraméterei sorban a következők: 
@@ -157,7 +161,7 @@ hey -c 10 -z 60s http://localhost:31112/function/myfunc1
             req (str): request body
         """
 
-        return invoke.invoke("myfunc2", req, context, False)
+        return invoke.invoke("<neptun>-myfunc2", req, context, False)
     ```
     - A láncban a második függvény
     ```python
@@ -171,7 +175,7 @@ hey -c 10 -z 60s http://localhost:31112/function/myfunc1
         time.sleep(0.02)
         return req
     ```
-
+6. build-elés, push-olás, deploy-olás hasonlóan az előzőkhöz, figyelj, hogy minden módosított függvényre végezd el.
 ## 3. Aszinkron függvényhívás
 1. Alakítsd át az első függvényt, hogy aszinkron módon hívja meg a második függvényt.
     ```python
@@ -183,8 +187,10 @@ hey -c 10 -z 60s http://localhost:31112/function/myfunc1
             req (str): request body
         """
 
-        return invoke.invoke("myfunc2", req, context, True)
+        return invoke.invoke("<neptun>-myfunc2", req, context, True)
     ```
+2. build-elés, push-olás, deploy-olás hasonlóan az előzőkhöz, figyelj, hogy minden módosított függvényre végezd el.
 3. Hívd meg az első függvényt.
-5. Vizsgáld a Jaeger felületén a létrejött tracing idősorokat. Miben különböznek ezek az előbbi esettől?
+4. Vizsgáld a Jaeger felületén a létrejött tracing idősorokat. Miben különböznek ezek az előbbi esettől?
+
 
