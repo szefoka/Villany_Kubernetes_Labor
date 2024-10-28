@@ -1,4 +1,8 @@
 ## Projekt létrehozása
+1. Jelentkezz be a GitLab-ra
+2. A balodali sávon kattints a Projects-re
+3. Jobb felül kattints a New Project-re
+4. 
 
 ## Alkalmazás létrehozása
 
@@ -159,3 +163,15 @@ config_argo:
     - git push origin $(git rev-parse HEAD):main
 
 ```
+## ArgoCD beállítása a projekt figyelésére
+Ha elvégeztük ezeket a lépéseket, akkor az ArgoCD felületén hozzunk létre egy új Applikációt, a new app gombra kattintva és adjuk meg a következőekt:
+- Application Name: argo-test-app (más is lehet)
+- Project Name: default
+- Sync Policy: Automatic (3 percenként ránéz a GitLab projektre és ha változást lát, módosít a lokális alkalmazáson)
+- Prune resources és self heal -> pipa
+- Autocreate namespace -> pipa
+- Repository url: A GitLab projekthez tartozó url
+- Path: helm/ (itt találhatóak az alkalmazás példányosításához a leírók)
+- Cluster url: https://kubernetes.default.svc (ezt felajánlja)
+- Namespace: argo-test-ns (vagy amit jónak látsz)
+A create gombra kattintva elfogadtatjuk a beállításokat. Ennek hatására egy nagy négyzet meg is jelenik, amire rákattintva láthatjuk, a letöltött és telepített komponenseket.
