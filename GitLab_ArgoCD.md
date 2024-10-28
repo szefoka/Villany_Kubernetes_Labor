@@ -140,3 +140,22 @@ version: 0.1.0
 appVersion: "1.16.0"
 
 ```
+
+## Workflow kiegészítése a Helm chart módosításával
+
+
+```yaml
+config_argo:
+  script:
+    - cd helm
+    - "sed -i 's|APP_VERSION:.*|APP_VERSION: '$CI_COMMIT_SHA'|' values.yaml"
+    - "sed -i 's|DOCKER_REGISTRY:.*|DOCKER_REGISTRY: '$CI_REGISTRY_USER'|' values.yaml"
+    - "sed -i 's|IMAGE_NAME:.*|IMAGE_NAME: 'villabproject'|' values.yaml"
+    - git config --global user.name 'felhasznaloneved'
+    - git config --global user.email '<email_amivel_regisztraltal>'
+    - git add values.yaml
+    - git commit -m "Update values.yaml"
+    - git remote set-url origin http://$GITLAB_USERNAME:$GITLAB_PASSWORD@128.105.146.171:8080/$GITLAB_USERNAME/myproject.git
+    - git push origin $(git rev-parse HEAD):main
+
+```
