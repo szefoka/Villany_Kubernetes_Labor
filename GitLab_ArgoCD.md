@@ -190,6 +190,17 @@ appVersion: "1.16.0"
 ## Workflow kiegészítése a Helm chart módosításával
 
 Készítsünk egy újabb feladatot a Workflow-hoz. Az alábbi részt csak másold a már létrehozott .gitlab-ci.yml fájl tartalma alá.
+Az alábbi yaml egy config_argo feladatot fog létrehozni és módosítja a /helm/values.yaml tartalmát egy-egy sed parancs segítségével.
+
+Az APP_VERSION értékét átírja az aktuális COMMIT_SHA-ra,a DOCKER_REGISTRY értékét a tárolt változókból veszi át, az IMAGE_NAME értékét pedig villabproject-re állítja.
+
+A values.yaml módosítása után egy commit és push parancsot kísérel meg, viszont ehhez szüksége van az adataidra. 
+Emiatt szükségünk lesz még két változó létrehozására amit a már ismert módon tudunk a CI/CD Variables lehetőségen keresztül megadni.
+1. GITLAB_USERNAME - A felhasználónév amivel regisztráltál a GitLab-ra
+2. GITLAB_PASSWORD - A GitLab profilod jelszava
+3. GITLAB_EMAIL - Az email címed amivel a GitLab-ra regisztráltál
+
+Ha úgy tetszik, akkor az utolsó előtti sorban a myproject.git-ből a myproject is eltárolható egy váltázóban, akkor még rugalmasabb lesz ez a workflow szakasz és más projektekhez is könnyebben tudod illeszteni.
 
 ```yaml
 config_argo:
@@ -198,8 +209,8 @@ config_argo:
     - "sed -i 's|APP_VERSION:.*|APP_VERSION: '$CI_COMMIT_SHA'|' values.yaml"
     - "sed -i 's|DOCKER_REGISTRY:.*|DOCKER_REGISTRY: '$CI_REGISTRY_USER'|' values.yaml"
     - "sed -i 's|IMAGE_NAME:.*|IMAGE_NAME: 'villabproject'|' values.yaml"
-    - git config --global user.name 'felhasznaloneved'
-    - git config --global user.email '<email_amivel_regisztraltal>'
+    - git config --global user.name $GITLAB_USERNAME
+    - git config --global user.email $GITLAB_EMAIL
     - git add values.yaml
     - git commit -m "Update values.yaml"
     - git remote set-url origin http://$GITLAB_USERNAME:$GITLAB_PASSWORD@128.105.146.171:8080/$GITLAB_USERNAME/myproject.git
