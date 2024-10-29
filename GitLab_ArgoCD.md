@@ -42,6 +42,21 @@ CMD python -u app.py
 ```
 
 ## Workflow létrehozása
+
+Hozzunk létre egy kezdetleges workflow-t amely a Dockerfile-t felhasználva egy image-et build-el, majd azt egy tag-gel feltölti a Dockerhub profilodra.
+Ha jobban megvizsgálod az alábbi fájl tartalmát, láthatod, hogy néhány változót használ.
+* CI_REGISTRY_USER - A Dockerhub-os profilod felhasználóneve
+* CI_REGISTRY_PASSWORD - A Dockerhub-os profilod jelszava
+A DOCKER_IMAGE_NAME a CI_REGISTRY_USER és egy fixre választható, jelen esetben villabproject string összekötésével jön létre. Ahol a villabproject lesz az image-ed neve a saját Dockerhub profilodon. Persze ha úgy tetszik, a villabproject is helyettesíthető egy változóval.
+
+A változók beállítására a projekteden belül van lehetőséged. 
+1. Kattints a bal sávban a Settings-re majd a CI/CD-re
+2. Nyisd le a Variables szakaszt
+3. Kattints az Add variable gombra, ami egy jobboldali sávot hoz fel
+4. A key és value mezőket add meg
+5. A key legyen a fenti CI_REGISTRY_USER, a value pedig a Dockerhub felhasználóneved, végül Add variable
+6. Add hozzá a jelszót is, key: CI_REGISTRY_PASSWORD, value: a Dockerhub profilod jelszava, majd Add variable
+
 ```yaml
 default:
   before_script:
