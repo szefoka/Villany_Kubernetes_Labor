@@ -2,7 +2,9 @@
 1. Jelentkezz be a GitLab-ra
 2. A balodali sávon kattints a Projects-re
 3. Jobb felül kattints a New Project-re
-4. 
+4. Kattints a Create blank project lehetőségre
+5. Add meg a projekt nevét és állíds publikusra az elérhetőségét
+6. Végül kattints a Create project gombra.
 
 ## Alkalmazás létrehozása
 
