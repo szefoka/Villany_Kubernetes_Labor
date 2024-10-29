@@ -46,11 +46,13 @@ CMD python -u app.py
 Hozzunk létre egy kezdetleges workflow-t amely a Dockerfile-t felhasználva egy image-et build-el, majd azt egy tag-gel feltölti a Dockerhub profilodra.
 Ha jobban megvizsgálod az alábbi fájl tartalmát, láthatod, hogy néhány változót használ.
 * CI_REGISTRY_USER - A Dockerhub-os profilod felhasználóneve
-* CI_REGISTRY_PASSWORD - A Dockerhub-os profilod jelszava
+* CI_REGISTRY_PASSWORD - A Dockerhub profilod jelszava
+
 A DOCKER_IMAGE_NAME a CI_REGISTRY_USER és egy fixre választható, jelen esetben villabproject string összekötésével jön létre. Ahol a villabproject lesz az image-ed neve a saját Dockerhub profilodon. Persze ha úgy tetszik, a villabproject is helyettesíthető egy változóval.
+
 Találsz egy CI_COMMIT_SHA változót is, amelyet a GitLab alapértelmezetten kezel, így ezt nem kell megadni. Ennek a változónak az értéke az adott push-hoz tartozó hash, amely egyedi, így ezzel fogjuk a Dockerhub-ra feltöltött image-eket verziózni.
 
-A változók beállítására a projekteden belül van lehetőséged. 
+### A változók beállítására a projekteden belül van lehetőséged. 
 1. Kattints a bal sávban a Settings-re majd a CI/CD-re
 2. Nyisd le a Variables szakaszt
 3. Kattints az Add variable gombra, ami egy jobboldali sávot hoz fel
@@ -73,6 +75,9 @@ build_image:
     - docker build -t $DOCKER_IMAGE_NAME:$CI_COMMIT_SHA .
     - docker push $DOCKER_IMAGE_NAME:$CI_COMMIT_SHA
 ```
+Ha ezzel megvagyunk, akkor valahol jobb felül meg kell jelenjen egy kék karika és egy folyamatot ábrázoló belső kis kör amiből hiányzik egy darab. Erre kattintva át tudsz navigálni a Workflow felületére ahol találni fogysz egy test nevű dobozt, azon belül pedig egy build_image sort. A build_image-re kattintva meg tudod nézni, hogy milyen parancsok futottak le a build_image feladatban. Ha minden rendben akkor egy zöld pipa lesz az eredmény, ellenkező esetben egy piros X. Ez a Workflow minden push-ra le fog futni.
+
+Ha sikeresen lefutott a Workflow, nézd meg a Dockerhub-on, hogy az image megjelent-e a profilod alatt, azt is figyeld meg, hogy az image-hez tartozó tag egy hash lesz ami éppen a CI_COMMIT_SHA változó értéke.
 
 ## Helm chart-ok létrehozása
 
@@ -87,6 +92,8 @@ A Kubernetes által használt yaml fájl-ok jól le tudják írni az erőforrás
 Ezeknek a fájloknak készítsunk egy másik könyvtárat, helm néven. A helm könyvtáron belül legyen egy values.yaml fájl és egy templates mappa. A templates mappa tartalmazza a következőkben bemutatott két fájlt - deployment.yaml és service.yaml. A Helm egy Chart.yaml fájlt is definiál amiben a Chartról találhatók információk.
 
 A deployment-et leíró yaml fájl. Figyeljük meg, a {{ .Values.env.DOCKER_REGISTRY }}, {{ .Values.env.IMAGE_NAME }}, {{ .Values.env.APP_VERSION }} értékeket. Ezeket a helm values.yaml fájljából veszi és ezzel adja meg, hogy melyik image-et töltse le a Dockerhub-ról.
+
+Kezdetben a values.yaml fájlba csak valami töltelék értékeket adunk meg, mivel ezt majd a GitLab Workflow felül fogja írni.
 
 deployment.yaml
 ```yaml
@@ -182,6 +189,7 @@ appVersion: "1.16.0"
 
 ## Workflow kiegészítése a Helm chart módosításával
 
+Készítsünk egy újabb feladatot a Workflow-hoz. Az alábbi részt csak másold a már létrehozott .gitlab-ci.yml fájl tartalma alá.
 
 ```yaml
 config_argo:
