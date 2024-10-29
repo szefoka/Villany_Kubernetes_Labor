@@ -48,6 +48,7 @@ Ha jobban megvizsgálod az alábbi fájl tartalmát, láthatod, hogy néhány v�
 * CI_REGISTRY_USER - A Dockerhub-os profilod felhasználóneve
 * CI_REGISTRY_PASSWORD - A Dockerhub-os profilod jelszava
 A DOCKER_IMAGE_NAME a CI_REGISTRY_USER és egy fixre választható, jelen esetben villabproject string összekötésével jön létre. Ahol a villabproject lesz az image-ed neve a saját Dockerhub profilodon. Persze ha úgy tetszik, a villabproject is helyettesíthető egy változóval.
+Találsz egy CI_COMMIT_SHA változót is, amelyet a GitLab alapértelmezetten kezel, így ezt nem kell megadni. Ennek a változónak az értéke az adott push-hoz tartozó hash, amely egyedi, így ezzel fogjuk a Dockerhub-ra feltöltött image-eket verziózni.
 
 A változók beállítására a projekteden belül van lehetőséged. 
 1. Kattints a bal sávban a Settings-re majd a CI/CD-re
@@ -75,6 +76,14 @@ build_image:
 
 ## Helm chart-ok létrehozása
 
+A Kubernetes-ben futtatott alkalmazásokhoz felveszünk egy deployment és egy service erőforrásleírót.
+A deployment lehetővé teszi a pod-ok indítását és ezen felül figyel arra is, hogy ha esetleg egy pod valamilyen okoktól fogva megsemmisülnek, akkor azt újraindítsa.
+A service erőforrás egy hálózati végpont (IP - Port) mögé rejti a választott deployment által indított pod-okat. Ezt a párosítást a metadata mezőkben megadott label értékekkel valósítjuk meg. 
+A Kubernetes által használt yaml fájl-ok jól le tudják írni az erőforrásokat, viszont ezekben fix értékek szerepelnek, nem paraméterezhetőek egyszerűen. Emiatt a labor során ahelyett, hogy Kubernetes yaml fájlokat használnánk, inkább a Helm által paraméterezhető yaml fájlokat fogunk írni, így mindig a legújabb konténer image-et tudjuk letölteni.
+Ezeknek a fájloknak készítsunk egy másik könyvtárat, helm néven. A helm könyvtáron belül legyen egy values.yaml fájl és egy templates mappa. A templates mappa tartalmazza a következőkben bemutatott két fájlt - deployment.yaml és service.yaml. A Helm egy Chart.yaml fájlt is definiál amiben a Chartról találhatók információk.
+A deployment-et leíró yaml fájl. Figyeljük meg, a {{ .Values.env.DOCKER_REGISTRY }}, {{ .Values.env.IMAGE_NAME }}, {{ .Values.env.APP_VERSION }} értékeket. Ezeket a helm values.yaml fájljából veszi és ezzel adja meg, hogy melyik image-et töltse le a Dockerhub-ról.
+
+deployment.yaml
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -114,7 +123,7 @@ spec:
             successThreshold: 1
             failureThreshold: 3
 ```
-
+service.yaml
 ```yaml
 apiVersion: v1
 kind: Service
@@ -130,14 +139,14 @@ spec:
   selector:
     app: argo-test-app1
 ```
-
+values.yaml
 ```yaml
 env:
   APP_VERSION: versionstring
   DOCKER_REGISTRY: registryusername
   IMAGE_NAME: imagename
 ```
-
+Chart.yaml
 ```yaml
 apiVersion: v2
 name: argo-test-app
