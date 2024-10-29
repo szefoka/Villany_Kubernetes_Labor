@@ -77,10 +77,15 @@ build_image:
 ## Helm chart-ok létrehozása
 
 A Kubernetes-ben futtatott alkalmazásokhoz felveszünk egy deployment és egy service erőforrásleírót.
+
 A deployment lehetővé teszi a pod-ok indítását és ezen felül figyel arra is, hogy ha esetleg egy pod valamilyen okoktól fogva megsemmisülnek, akkor azt újraindítsa.
+
 A service erőforrás egy hálózati végpont (IP - Port) mögé rejti a választott deployment által indított pod-okat. Ezt a párosítást a metadata mezőkben megadott label értékekkel valósítjuk meg. 
+
 A Kubernetes által használt yaml fájl-ok jól le tudják írni az erőforrásokat, viszont ezekben fix értékek szerepelnek, nem paraméterezhetőek egyszerűen. Emiatt a labor során ahelyett, hogy Kubernetes yaml fájlokat használnánk, inkább a Helm által paraméterezhető yaml fájlokat fogunk írni, így mindig a legújabb konténer image-et tudjuk letölteni.
+
 Ezeknek a fájloknak készítsunk egy másik könyvtárat, helm néven. A helm könyvtáron belül legyen egy values.yaml fájl és egy templates mappa. A templates mappa tartalmazza a következőkben bemutatott két fájlt - deployment.yaml és service.yaml. A Helm egy Chart.yaml fájlt is definiál amiben a Chartról találhatók információk.
+
 A deployment-et leíró yaml fájl. Figyeljük meg, a {{ .Values.env.DOCKER_REGISTRY }}, {{ .Values.env.IMAGE_NAME }}, {{ .Values.env.APP_VERSION }} értékeket. Ezeket a helm values.yaml fájljából veszi és ezzel adja meg, hogy melyik image-et töltse le a Dockerhub-ról.
 
 deployment.yaml
