@@ -218,7 +218,7 @@ config_argo:
 
 ```
 ## ArgoCD beállítása a projekt figyelésére
-Ha elvégeztük ezeket a lépéseket, akkor az ArgoCD felületén hozzunk létre egy új Applikációt, a new app gombra kattintva és adjuk meg a következőekt:
+Ha elvégeztük ezeket a lépéseket, akkor az ArgoCD felületén hozzunk létre egy új Applikációt, a new app gombra kattintva és adjuk meg a következőket:
 - Application Name: argo-test-app (más is lehet)
 - Project Name: default
 - Sync Policy: Automatic (3 percenként ránéz a GitLab projektre és ha változást lát, módosít a lokális alkalmazáson)
