@@ -8,6 +8,8 @@
 
 ## Alkalmazás létrehozása
 
+Hozz létre a projekt gyökerében egy alkalmazást. Erre egy lehetőség ha mondjuk egy app.py fájlt készítesz, amibe az alábbi egyszerű webszerver kódját beilleszted. A lenti kód egy Flask szervert indít ami az 5000-es porton fog figyelni. A / útvonalon kiírja hogy "Hello World!!", a /health útvonal pedig esetleges healthcheck kérésekre válaszolhat.
+
 ```Python
 from flask import Flask
  
@@ -26,6 +28,8 @@ if __name__ == '__main__':
 ```
 
 ## Dockerfile létrehozása
+
+Mivel az alkalmazás a Kubernetes rendszerben fog futni, ezért hozz létre egy Dockerfile-t amiből a GitLab CI workflow-ja egy Docker image-et fog készíteni. Az alábbi Dockerfile a fenti python szerver Docker konténerben való futtatásához szükséges lépéseket végzi el, így a függőségek telepítését és az app.py image-be való másolását.
 
 ```Dockerfile
 FROM python:3.6.15-slim-buster
