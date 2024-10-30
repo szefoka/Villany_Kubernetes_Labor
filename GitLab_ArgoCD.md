@@ -1,6 +1,8 @@
 ## Projekt létrehozása
+A labor során egy közös GitLab runner-t fogtok használni, amit egy csoporton belül lehet megosztottan használni. A felhasználóitokat hozzáadtam a csoporthoz, így nektek már csak egy projektet kell létrehozni a csoporton belül. Owner jogosultságot kapott mindenki. Ennek tudatában kérlek ne rosszalkodjatok! :)
+
 1. Jelentkezz be a GitLab-ra
-2. A balodali sávon kattints a Projects-re
+2. A baloldali sávon kattints a Grups-ra
 3. Jobb felül kattints a New Project-re
 4. Kattints a Create blank project lehetőségre
 5. Add meg a projekt nevét és állíds publikusra az elérhetőségét
@@ -40,6 +42,10 @@ USER pythonuser
 COPY app.py app.py
 CMD python -u app.py
 ```
+## Runner csatolása
+1. Kattints a bal sávin a settings-re majd a CI/CD-re
+2. Nyisd le a Runners lehetőséget
+3. Látni fogsz egy Other available runners feliratot, alatta találsz egy runner-t. Kattints az Enable for this project gombra
 
 ## Workflow létrehozása
 
