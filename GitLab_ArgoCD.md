@@ -1,3 +1,5 @@
+A labor során egy pici alkalmazást fogtok készíteni, ezt a laborkörnyezetben futtatott GitLab-on fogjátok létrehozni. Az alkalmazást a GitLab Workflow segítségével automatizált módon Docker image-ekbe fogjátok csomagolni és az image-et a saját DockerHub profilotokra fogjátok feltölteni. Az ArgoCD szolgáltatás segítségével pedig elindítjátok majd frissítitek az alkalmazást egy Kubernetes környezetben, ha az alkalmazás kódja megváltozik.
+
 ## Projekt létrehozása
 A labor során egy közös GitLab runner-t fogtok használni, amit egy csoporton belül lehet megosztottan használni. A felhasználóitokat hozzáadtam a csoporthoz, így nektek már csak egy projektet kell létrehozni a csoporton belül. Owner jogosultságot kapott mindenki. Ennek tudatában kérlek ne rosszalkodjatok! :)
 
@@ -235,3 +237,13 @@ Ha elvégeztük ezeket a lépéseket, akkor az ArgoCD felületén hozzunk létre
 - Cluster url: https://kubernetes.default.svc (ezt felajánlja)
 - Namespace: argo-test-ns (vagy amit jónak látsz)
 A create gombra kattintva elfogadtatjuk a beállításokat. Ennek hatására egy nagy négyzet meg is jelenik, amire rákattintva láthatjuk, a letöltött és telepített komponenseket.
+
+## Az alkalmazás kódjának frissítése
+Az app.py fájlban írjátok át a Hello World!! szöveget tetszőlegesen, én pl. 3 felkiáltójelet raktam a végére a 2 helyett. Push-oljátok a módosításokat és várjatok kb. 3-4 percet.
+
+Várakozás közben figyeljétek az ArgoCD felületét és a Kubernetes pod-okat is, mondjuk a következő paranccsal:
+```bash
+kubectl get pods -n argo-test-ns -w
+```
+Frissült az alkalmazás? Próbáljátok ki.
+
