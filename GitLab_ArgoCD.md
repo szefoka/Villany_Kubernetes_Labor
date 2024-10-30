@@ -5,10 +5,11 @@ A labor során egy közös GitLab runner-t fogtok használni, amit egy csoporton
 
 1. Jelentkezz be a GitLab-ra
 2. A baloldali sávon kattints a Grups-ra
-3. Jobb felül kattints a New Project-re
-4. Kattints a Create blank project lehetőségre
-5. Add meg a projekt nevét és állíds publikusra az elérhetőségét
-6. Végül kattints a Create project gombra.
+3. Válaszd ki a VillMScLab csoportot
+4. Jobb felül kattints a New Project-re
+5. Kattints a Create blank project lehetőségre
+6. Add meg a projekt nevét és állíds publikusra az elérhetőségét
+7. Végül kattints a Create project gombra.
 
 ## Alkalmazás létrehozása
 
