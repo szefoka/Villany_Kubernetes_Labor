@@ -67,14 +67,39 @@ A függvényke futását különböző, úgynevezett tracing megoldással követ
   ```bash
   cp -r /home/labor/Villany_Kubernetes_Labor/function_runtime /home/labor/functions
   ```
-3. Lépj be a Villany_Kubernetes_Labor/FaaS_Setup mappába.
-4. Első alkalommal add ki a make install parancsot, ha valamilyen okból félbe kellett hagynod a labort és a VM-et leállítottad, akkor a make reset parancsot add ki.
-5. A make futtatása után az ip a paranccsal kérd le a VM-ed enp0s8 interfész címét. Ezen az IP-n keresztül  fogod elérni a VM-ben futó
+3. Add ki a következő parancsokat a k3s + OpenFaaS telepítésére:
+  ```bash
+  curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
+
+  export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+  
+  curl -sSLf https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+  kubectl apply -f https://raw.githubusercontent.com/openfaas/faas-netes/master/namespaces.yml
+  helm repo add openfaas https://openfaas.github.io/faas-netes/
+  helm repo update \
+   && helm upgrade openfaas --install openfaas/openfaas \
+      --namespace openfaas  \
+      --set functionNamespace=openfaas-fn \
+      --set generateBasicAuth=true \
+      --set openfaasPRO=false
+  
+  PASSWORD=$(kubectl -n openfaas get secret basic-auth -o jsonpath="{.data.basic-auth-password}" | base64 --decode) && \
+  echo "OpenFaaS admin password: $PASSWORD"
+  
+  curl -sSL https://cli.openfaas.com | sudo -E sh
+  ```
+
+
+4. A telepítő script futtatása után az ip a paranccsal kérd le a VM-ed enp0s8 interfész címét. Ezen az IP-n keresztül  fogod elérni a VM-ben futó
  szolgáltatásokat.
   ```bash
   ip a
   ```
-6. Ezek után a /home/labor/functions mappában add ki a faas-cli parancsokat!
+  Ha nem lenne IP címe az enp0s8 interfésznek, akkor add ki a következő parancsot
+  ```bash
+  sudo dhclient enp0s8
+  ```
+5. Ezek után a /home/labor/functions mappában add ki a faas-cli parancsokat!
 
 ## 1. Függvény létrehozása és használata
 ### 1.1 Python Hello függvény létrehozása 
