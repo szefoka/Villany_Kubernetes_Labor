@@ -87,6 +87,7 @@ A függvényke futását különböző, úgynevezett tracing megoldással követ
   echo "OpenFaaS admin password: $PASSWORD"
   
   curl -sSL https://cli.openfaas.com | sudo -E sh
+  https://raw.githubusercontent.com/szefoka/Villany_Kubernetes_Labor/refs/heads/main/yaml/jaegerstack.yaml
   ```
 
 
@@ -95,7 +96,7 @@ A függvényke futását különböző, úgynevezett tracing megoldással követ
   ```bash
   ip a
   ```
-  Ha nem lenne IP címe az enp0s8 interfésznek, akkor add ki a következő parancsot
+    Ha nem lenne IP címe az enp0s8 interfésznek, akkor add ki a következő parancsot
   ```bash
   sudo dhclient enp0s8
   ```
