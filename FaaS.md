@@ -156,11 +156,11 @@ PASSWORD=$(kubectl -n openfaas get secret basic-auth -o jsonpath="{.data.basic-a
 echo "OpenFaaS admin password: $PASSWORD"
 ```
 
-### 1.3 A függvény kiskálázása
-Terheld a függvényt a Hey programmal, 1 percig, nézd meg, hogy hány példányra skálázódik ki a függvény, ezt a webes felületen tudod a legkönnyebben nyomon követni a replicas felirat alatt látható a függvények aktuális példányszáma. hey -c 10 -z 60s <fuggveny eleresi utja>
-```bash
-hey -c 10 -z 60s http://localhost:31112/function/<neptun>-myfunc1
-```
+[//]: <> (### 1.3 A függvény kiskálázása)
+[//]: <> (Terheld a függvényt a Hey programmal, 1 percig, nézd meg, hogy hány példányra skálázódik ki a függvény, ezt a webes felületen tudod a legkönnyebben nyomon követni a replicas felirat alatt látható a függvények aktuális példányszáma. hey -c 10 -z 60s <fuggveny eleresi utja>)
+[//]: <> (```bash)
+[//]: <> (hey -c 10 -z 60s http://localhost:31112/function/<neptun>-myfunc1)
+[//]: <> (```)
 
 ## 2. Függvények láncolása
 1. Az előző feladat alapján hozz létre egy második python nyelvű függvényt.
