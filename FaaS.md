@@ -76,23 +76,17 @@ A függvényke futását különböző, úgynevezett tracing megoldással követ
   ```
 6. Ezek után a /home/labor/functions mappában add ki a faas-cli parancsokat!
 
-Csoportok és gépek:
-1. c220g1-030623.wisc.cloudlab.us
-2. c220g5-111010.wisc.cloudlab.us
-3. c220g5-110931.wisc.cloudlab.us
-4. c220g1-030614.wisc.cloudlab.us
-5. c220g5-120124.wisc.cloudlab.us
-
 ## 1. Függvény létrehozása és használata
 ### 1.1 Python Hello függvény létrehozása 
 #### A bejelentkezésre nincs szükség, ugorj a következő pontra
 - Elsőként jelentkezz be az OpenFaaS rendszerbe a faas-cli alkalmazás használatával. A felhasználóneved az admin lesz, míg a jelszavad pedig a következőképpen kapod meg.
   ```bash
-  faas-cli login -u admin -p Hello -g localhost:31112
+  PASSWORD=$(kubectl -n openfaas get secret basic-auth -o jsonpath="{.data.basic-auth-password}" | base64 --decode) && echo "OpenFaaS admin ^Cssword: $PASSWORD"
+  faas-cli login -u admin -p <JELSZÓ> -g localhost:31112
   ```
-- A faas-cli new paranccsal tudsz létrehozni új függvényt, melynek a --lang paraméterében megadva tudod kiválasztani a megfelelő nyelvet. A függvény nevének válassz egy alulvonásoktól mentes nevet, pl myfunc-1. A faas-cli parancshoz azt is add meg, hogy mely registry-be kerüljön a függvény a push parancs kiadására. Ehhez használd a --prefix szefoka lehetőséget.
+- A faas-cli new paranccsal tudsz létrehozni új függvényt, melynek a --lang paraméterében megadva tudod kiválasztani a megfelelő nyelvet. A függvény nevének válassz egy alulvonásoktól mentes nevet, pl myfunc-1. A faas-cli parancshoz azt is add meg, hogy mely registry-be kerüljön a függvény a push parancs kiadására. Ehhez használd a --prefix lehetőséget ahol a saját github felhasználód nevét adod meg.
   ```
-  faas-cli new --lang python --prefix szefoka <neptun>-myfunc1
+  faas-cli new --lang python --prefix <GITHUB_FELHASZNALO_NEV> <neptun>-myfunc1
   ```
 - A parancs sikeres lefutására létrejön egy mappa és egy yml fájl, mindkettő a függvényed nevét viseli
 - A létrejött mappában találsz egy handler.py fájlt, melyben a függvényedet tudod módosítani és egy requirements.txt fájlt amiben a függvényhez való függőségeket tudod megadni
@@ -146,7 +140,7 @@ hey -c 10 -z 60s http://localhost:31112/function/<neptun>-myfunc1
 ## 2. Függvények láncolása
 1. Az előző feladat alapján hozz létre egy második python nyelvű függvényt.
    ```bash
-   faas-cli new --lang python --prefix szefoka <neptun>-myfunc2
+   faas-cli new --lang python --prefix <GITHUB_FELHASZNALO_NEV> <neptun>-myfunc2
    ```
 2. Módosítsd az első függvényt, hogy az hívja meg az újonnan létrehozott függvényt a Hello szöveggel és adja vissza eredményként az új függvény által visszaadott értékt.
 3. A függvények hívását az invoke utasítás meghívásával teheted meg, aminek a paraméterei sorban a következők: 
