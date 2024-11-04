@@ -87,7 +87,7 @@ A függvényke futását különböző, úgynevezett tracing megoldással követ
   echo "OpenFaaS admin password: $PASSWORD"
   
   curl -sSL https://cli.openfaas.com | sudo -E sh
-  https://raw.githubusercontent.com/szefoka/Villany_Kubernetes_Labor/refs/heads/main/yaml/jaegerstack.yaml
+  kubectl apply -f https://raw.githubusercontent.com/szefoka/Villany_Kubernetes_Labor/refs/heads/main/yaml/jaegerstack.yaml
   ```
 
 
