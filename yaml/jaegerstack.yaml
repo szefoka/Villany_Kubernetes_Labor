@@ -98,8 +98,8 @@ spec:
       hostname: jaeger
       containers:
       - name: jaeger-all-in-one
-        image: jaegertracing/all-in-one:latest
-        #image: jaegertracing/all-in-one:1.12
+        #image: jaegertracing/all-in-one:latest
+        image: jaegertracing/all-in-one:1.12
         env:
         - name: SPAN_STORAGE_TYPE
           value: "elasticsearch"
