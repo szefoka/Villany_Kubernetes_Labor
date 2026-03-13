@@ -1,6 +1,6 @@
 ARG PYTHON_VERSION=3.11
 FROM --platform=${TARGETPLATFORM:-linux/amd64} ghcr.io/openfaas/of-watchdog:0.9.10 as watchdog
-FROM --platform=${TARGETPLATFORM:-linux/amd64} python:${PYTHON_VERSION}-slim-buster as build
+FROM --platform=${TARGETPLATFORM:-linux/amd64} python:${PYTHON_VERSION}-slim-trixie as build
 
 COPY --from=watchdog /fwatchdog /usr/bin/fwatchdog
 RUN chmod +x /usr/bin/fwatchdog
@@ -14,6 +14,7 @@ RUN apt-get -qy update \
 
 # Add non root user
 RUN addgroup --system app && adduser app --system --ingroup app
+RUN mkdir -p /home/app
 RUN chown app /home/app
 
 USER app
